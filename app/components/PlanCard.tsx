@@ -2,8 +2,7 @@
 
 import { Plan } from "@/lib/types";
 import { useState } from "react";
-import Link from "next/link";
-import { CheckoutBricks } from "./CheckoutBricks";
+import { PayPalCheckout } from "./PayPalCheckout";
 
 interface PlanCardProps {
   plan: Plan;
@@ -91,7 +90,7 @@ export function PlanCard({ plan }: PlanCardProps) {
         </div>
       ) : (
         <div className="space-y-3">
-          <CheckoutBricks
+          <PayPalCheckout
             planId={plan.id}
             email={email}
             planName={plan.name}
@@ -110,9 +109,7 @@ export function PlanCard({ plan }: PlanCardProps) {
       {/* Footer */}
       <p className="text-xs text-center mt-4" style={{ color: "var(--text-muted)" }}>
         Pagamento seguro via{" "}
-        <Link href="#" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-          Mercado Pago
-        </Link>
+        <span style={{ color: "var(--navy)", fontWeight: "600" }}>PayPal</span>
       </p>
     </div>
   );
