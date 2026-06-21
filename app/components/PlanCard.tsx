@@ -3,6 +3,7 @@
 import { Plan } from "@/lib/types";
 import { useState } from "react";
 import Link from "next/link";
+import { CheckoutBricks } from "./CheckoutBricks";
 
 interface PlanCardProps {
   plan: Plan;
@@ -10,45 +11,9 @@ interface PlanCardProps {
 
 export function PlanCard({ plan }: PlanCardProps) {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const priceFormatted = (plan.price_brl / 100).toFixed(2).replace(".", ",");
-
-  async function handleCheckout(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      const response = await fetch("/api/checkout/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: plan.id, email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || "Erro ao processar checkout");
-        setLoading(false);
-        return;
-      }
-
-      // Redirect to Mercado Pago
-      const checkoutUrl = data.initPoint || data.sandboxInitPoint;
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      } else {
-        setError("Erro ao redirecionar para o pagamento");
-        setLoading(false);
-      }
-    } catch (err) {
-      setError("Erro ao processar checkout");
-      setLoading(false);
-    }
-  }
 
   return (
     <div
@@ -93,65 +58,58 @@ export function PlanCard({ plan }: PlanCardProps) {
         </p>
       </div>
 
-      {/* CTA Button */}
-      {!showForm ? (
-        <button
-          onClick={() => setShowForm(true)}
-          className="w-full py-2 px-4 rounded-lg font-semibold text-white transition-all"
-          style={{ backgroundColor: "var(--navy)" }}
-        >
-          Comprar Agora
-        </button>
-      ) : (
-        <form onSubmit={handleCheckout} className="space-y-3">
-          <div>
-            <label className="block text-xs font-semibold mb-1" style={{ color: "var(--text-main)" }}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-3 py-2 border rounded text-sm"
-              style={{ borderColor: "var(--border)" }}
-              placeholder="seu@email.com"
-            />
-          </div>
-
-          {error && (
-            <div className="text-xs p-2 rounded" style={{ backgroundColor: "#fde8e8", color: "#c0392b" }}>
-              {error}
-            </div>
-          )}
-
+      {/* Checkout Section */}
+      {!showCheckout ? (
+        <div className="space-y-3">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="seu@email.com"
+            required
+            className="w-full px-3 py-2 border rounded text-sm"
+            style={{ borderColor: "var(--border)" }}
+          />
           <button
-            type="submit"
-            disabled={loading}
+            onClick={() => setShowCheckout(email.length > 0)}
+            disabled={email.length === 0}
             className="w-full py-2 px-4 rounded-lg font-semibold text-white disabled:opacity-50"
-            style={{ backgroundColor: "var(--gold)" }}
+            style={{ backgroundColor: "var(--navy)" }}
           >
-            {loading ? "Processando..." : "Ir para Pagamento"}
+            Comprar Agora
           </button>
-
           <button
-            type="button"
             onClick={() => {
-              setShowForm(false);
+              setShowCheckout(false);
               setEmail("");
-              setError("");
             }}
-            className="w-full py-2 px-4 rounded-lg font-semibold border"
+            className="w-full py-2 px-4 rounded-lg font-semibold border text-sm"
             style={{ borderColor: "var(--border)", color: "var(--text-main)" }}
           >
             Cancelar
           </button>
-        </form>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <CheckoutBricks
+            planId={plan.id}
+            email={email}
+            planName={plan.name}
+            price={plan.price_brl}
+          />
+          <button
+            onClick={() => setShowCheckout(false)}
+            className="w-full py-2 px-4 rounded-lg font-semibold border text-sm"
+            style={{ borderColor: "var(--border)", color: "var(--text-main)" }}
+          >
+            Voltar
+          </button>
+        </div>
       )}
 
       {/* Footer */}
       <p className="text-xs text-center mt-4" style={{ color: "var(--text-muted)" }}>
-        Pagamento via{" "}
+        Pagamento seguro via{" "}
         <Link href="#" style={{ color: "var(--navy)", textDecoration: "underline" }}>
           Mercado Pago
         </Link>
