@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { initMercadoPago, Wallet } from "@mercadopago/sdk-js";
+import { loadMercadoPago, Wallet } from "@mercadopago/sdk-js";
 
 interface CheckoutBricksProps {
   planId: string;
@@ -16,7 +16,7 @@ export function CheckoutBricks({ planId, email, planName, price }: CheckoutBrick
   const [error, setError] = useState("");
 
   useEffect(() => {
-    initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY || "");
+    loadMercadoPago();
   }, []);
 
   useEffect(() => {
