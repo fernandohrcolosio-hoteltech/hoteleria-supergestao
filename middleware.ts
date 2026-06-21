@@ -4,7 +4,6 @@ import { updateSession } from "@/lib/supabase/middleware";
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
 
-  // Protect authenticated routes
   const pathname = request.nextUrl.pathname;
 
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/ferramenta")) {
