@@ -1,54 +1,147 @@
-import { validateOnboardingToken } from "@/app/actions/auth";
-import { OnboardingForm } from "@/app/components/OnboardingForm";
-import Link from "next/link";
+"use client";
 
-interface CadastroPageProps {
-  params: Promise<{ token: string }>;
-}
+import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
-export default async function CadastroPage({ params }: CadastroPageProps) {
-  const { token } = await params;
-  const { purchase, error } = await validateOnboardingToken(token);
+export default function CadastroPage({ params }: { params: { token: string } }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  if (error || !purchase) {
-    return (
-      <main className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "var(--cream)" }}>
-        <div className="w-full max-w-md text-center">
-          <div className="text-5xl mb-4">❌</div>
-          <h1 className="text-2xl font-serif mb-4" style={{ color: "var(--navy)" }}>
-            Link Inválido
-          </h1>
-          <p className="mb-6" style={{ color: "var(--text-muted)" }}>
-            {error || "Este link de cadastro não é válido ou já foi utilizado."}
-          </p>
-          <Link
-            href="/"
-            className="inline-block px-6 py-2 rounded-lg text-white font-semibold"
-            style={{ backgroundColor: "var(--navy)" }}
-          >
-            Voltar para Home
-          </Link>
-        </div>
-      </main>
-    );
+  async function handleCadastro(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const supabase = createClient();
+
+      // Validar token
+      const { data: purchase, error: purchaseError } = await supabase
+        .from("purchases")
+        .select("id, email, plan_id, plans(tools)")
+        .eq("onboarding_token", params.token)
+        .eq("token_used", false)
+        .single();
+
+      if (purchaseError || !purchase) {
+        setError("Token inválido ou expirado");
+        setLoading(false);
+        return;
+      }
+
+      // Criar usuário no Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: purchase.email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        setError("Erro ao criar conta");
+        setLoading(false);
+        return;
+      }
+
+      // Criar acesso às ferramentas
+      const tools = purchase.plans?.tools || [];
+      for (const tool of tools) {
+        await supabase.from("user_tool_access").insert({
+          user_id: authData.user.id,
+          tool_slug: tool,
+          purchase_id: purchase.id,
+        });
+      }
+
+      // Marcar token como usado
+      await supabase
+        .from("purchases")
+        .update({ token_used: true })
+        .eq("id", purchase.id);
+
+      // Fazer login automático
+      await supabase.auth.signInWithPassword({
+        email: purchase.email,
+        password,
+      });
+
+      router.push("/dashboard");
+    } catch (err) {
+      setError("Erro ao criar conta. Tente novamente.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "var(--cream)" }}>
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-3xl font-serif mb-2" style={{ color: "var(--navy)" }}>
-            Bem-vindo!
-          </h1>
-          <p style={{ color: "var(--text-muted)" }}>
-            Seu pagamento foi aprovado. Crie sua conta para acessar.
-          </p>
-        </div>
+    <main className="flex-1 flex items-center justify-center py-12 px-4" style={{ backgroundColor: "var(--cream)" }}>
+      <div
+        className="rounded-lg p-8 shadow-sm border max-w-md w-full"
+        style={{ backgroundColor: "var(--white)", borderColor: "var(--border)" }}
+      >
+        <h1 className="text-2xl font-serif mb-2" style={{ color: "var(--navy)" }}>
+          Criar Conta
+        </h1>
+        <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
+          Complete seu cadastro para acessar as ferramentas
+        </p>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border" style={{ borderColor: "var(--border)" }}>
-          <OnboardingForm token={token} email={purchase.email} />
-        </div>
+        <form onSubmit={handleCadastro} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1" style={{ color: "var(--text-main)" }}>
+              Email
+            </label>
+            <input
+              type="email"
+              disabled
+              value={email}
+              className="w-full px-3 py-2 border rounded text-sm bg-gray-100"
+              style={{ borderColor: "var(--border)" }}
+            />
+            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+              Email verificado do pagamento
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1" style={{ color: "var(--text-main)" }}>
+              Senha
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded text-sm"
+              style={{ borderColor: "var(--border)" }}
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && (
+            <div className="text-xs p-2 rounded" style={{ backgroundColor: "#fde8e8", color: "#c0392b" }}>
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 px-4 rounded-lg font-semibold text-white disabled:opacity-50"
+            style={{ backgroundColor: "var(--navy)" }}
+          >
+            {loading ? "Criando conta..." : "Acessar Ferramentas"}
+          </button>
+        </form>
       </div>
     </main>
   );
