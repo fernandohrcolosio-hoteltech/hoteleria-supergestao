@@ -47,7 +47,7 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
       // Validar token
       const { data: purchase, error: purchaseError } = await supabase
         .from("purchases")
-        .select("id, email, plan_id, plans(tools)")
+        .select("id, email, plan_id")
         .eq("onboarding_token", params.token)
         .eq("token_used", false)
         .single();
@@ -57,6 +57,15 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
         setLoading(false);
         return;
       }
+
+      // Buscar tools do plano
+      const { data: plan } = await supabase
+        .from("plans")
+        .select("tools")
+        .eq("id", purchase.plan_id)
+        .single();
+
+      const tools = plan?.tools || [];
 
       // Criar usuário no Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -77,7 +86,6 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
       }
 
       // Criar acesso às ferramentas
-      const tools = purchase.plans?.tools || [];
       for (const tool of tools) {
         await supabase.from("user_tool_access").insert({
           user_id: authData.user.id,
