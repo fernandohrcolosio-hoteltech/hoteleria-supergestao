@@ -4,6 +4,16 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+interface Plan {
+  tools: string[];
+}
+
+interface Purchase {
+  id: string;
+  email: string;
+  plan_id: string;
+}
+
 export default function CadastroPage({ params }: { params: { token: string } }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,15 +26,15 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
     async function loadEmail() {
       try {
         const supabase = createClient();
-        const { data: purchase } = await supabase
+        const { data } = await supabase
           .from("purchases")
           .select("email")
           .eq("onboarding_token", params.token)
           .eq("token_used", false)
           .single();
 
-        if (purchase) {
-          setEmail(purchase.email);
+        if (data) {
+          setEmail((data as { email: string }).email);
         }
       } catch (err) {
         console.error("Erro ao carregar email:", err);
@@ -44,30 +54,29 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
     try {
       const supabase = createClient();
 
-      // Validar token
-      const { data: purchase, error: purchaseError } = await supabase
+      const { data: purchaseData } = await supabase
         .from("purchases")
         .select("id, email, plan_id")
         .eq("onboarding_token", params.token)
         .eq("token_used", false)
         .single();
 
-      if (purchaseError || !purchase) {
+      if (!purchaseData) {
         setError("Token inválido ou expirado");
         setLoading(false);
         return;
       }
 
-      // Buscar tools do plano
-      const { data: plan } = await supabase
+      const purchase = purchaseData as Purchase;
+
+      const { data: planData } = await supabase
         .from("plans")
         .select("tools")
         .eq("id", purchase.plan_id)
         .single();
 
-      const tools = plan?.tools || [];
+      const toolsList = planData ? (planData as Plan).tools : [];
 
-      // Criar usuário no Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: purchase.email,
         password,
@@ -85,8 +94,7 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
         return;
       }
 
-      // Criar acesso às ferramentas
-      for (const tool of tools) {
+      for (const tool of toolsList) {
         await supabase.from("user_tool_access").insert({
           user_id: authData.user.id,
           tool_slug: tool,
@@ -94,13 +102,11 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
         });
       }
 
-      // Marcar token como usado
       await supabase
         .from("purchases")
         .update({ token_used: true })
         .eq("id", purchase.id);
 
-      // Fazer login automático
       await supabase.auth.signInWithPassword({
         email: purchase.email,
         password,
@@ -113,6 +119,14 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
     } finally {
       setLoading(false);
     }
+  }
+
+  if (loadingEmail) {
+    return (
+      <main className="flex-1 flex items-center justify-center py-12 px-4" style={{ backgroundColor: "var(--cream)" }}>
+        <p style={{ color: "var(--text-muted)" }}>Carregando...</p>
+      </main>
+    );
   }
 
   return (
