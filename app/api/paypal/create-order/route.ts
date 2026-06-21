@@ -16,6 +16,12 @@ async function getPayPalToken() {
   });
 
   const data = await res.json();
+
+  if (!data.access_token) {
+    console.error("PayPal token error:", data);
+    throw new Error("Falha ao obter token PayPal");
+  }
+
   return data.access_token;
 }
 
@@ -49,49 +55,46 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Erro ao criar compra" }, { status: 500 });
     }
 
-    const token = await getPayPalToken();
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    const accessToken = await getPayPalToken();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://hoteleria-supergestao.vercel.app";
     const unitPrice = (plan.price_brl / 100).toFixed(2);
+
+    const orderBody = {
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          reference_id: purchase.id,
+          description: plan.name,
+          amount: {
+            currency_code: "USD",
+            value: unitPrice,
+          },
+        },
+      ],
+      application_context: {
+        brand_name: "Hub de Melhoria Contínua",
+        locale: "pt-BR",
+        landing_page: "LOGIN",
+        user_action: "PAY_NOW",
+        return_url: `${appUrl}/checkout/sucesso?purchase_id=${purchase.id}`,
+        cancel_url: `${appUrl}/checkout/falha?purchase_id=${purchase.id}`,
+      },
+    };
 
     const orderRes = await fetch("https://api-m.sandbox.paypal.com/v2/checkout/orders", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        intent: "CAPTURE",
-        purchase_units: [
-          {
-            reference_id: purchase.id,
-            description: plan.name,
-            amount: {
-              currency_code: "BRL",
-              value: unitPrice,
-            },
-          },
-        ],
-        payment_source: {
-          paypal: {
-            experience_context: {
-              payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
-              brand_name: "Hub de Melhoria Contínua",
-              locale: "pt-BR",
-              landing_page: "LOGIN",
-              user_action: "PAY_NOW",
-              return_url: `${appUrl}/checkout/sucesso?purchase_id=${purchase.id}`,
-              cancel_url: `${appUrl}/checkout/falha?purchase_id=${purchase.id}`,
-            },
-          },
-        },
-      }),
+      body: JSON.stringify(orderBody),
     });
 
     const order = await orderRes.json();
 
     if (!orderRes.ok) {
-      console.error("PayPal error:", order);
-      return NextResponse.json({ error: "Erro ao criar pedido PayPal" }, { status: 500 });
+      console.error("PayPal order error:", JSON.stringify(order));
+      return NextResponse.json({ error: "Erro ao criar pedido PayPal", detail: order }, { status: 500 });
     }
 
     await supabase
@@ -100,11 +103,11 @@ export async function POST(request: NextRequest) {
       .eq("id", purchase.id);
 
     const approvalLink = order.links?.find(
-      (l: { rel: string; href: string }) => l.rel === "payer-action"
+      (l: { rel: string; href: string }) => l.rel === "approve"
     );
 
     if (!approvalLink) {
-      console.error("No approval link in PayPal response:", order);
+      console.error("No approve link:", order);
       return NextResponse.json({ error: "Link de pagamento não encontrado" }, { status: 500 });
     }
 
