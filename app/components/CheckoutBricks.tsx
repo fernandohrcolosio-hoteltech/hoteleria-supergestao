@@ -77,7 +77,7 @@ export function CheckoutBricks({ planId, email, planName, price }: CheckoutBrick
       </div>
 
       <Wallet
-        initialization={{ preferenceId, redirectMode: "modal" }}
+        initialization={{ preferenceId }}
         customization={{ texts: { valueProp: "smart_option" } }}
       />
     </div>
