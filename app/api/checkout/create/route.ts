@@ -54,20 +54,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const unitPrice = plan.price_brl / 100;
+
     const preferenceData = {
+      transaction_amount: unitPrice,
       items: [
         {
           id: plan.id,
           title: plan.name,
           description: `Acesso a ${plan.tools.length} ferramenta(s): ${plan.tools.join(", ")}`,
           quantity: 1,
-          unit_price: plan.price_brl / 100, // Convert from centavos to BRL
+          unit_price: unitPrice,
           currency_id: "BRL",
         },
       ],
       payer: {
         email,
       },
+      payment_methods: {
+        excluded_payment_types: [
+          { id: "bank_transfer" }
+        ],
+        installments: 1,
+      },
+      processing_modes: ["aggregator"],
       external_reference: purchase.id,
       notification_url: `${appUrl}/api/webhooks/mercadopago`,
       back_urls: {
