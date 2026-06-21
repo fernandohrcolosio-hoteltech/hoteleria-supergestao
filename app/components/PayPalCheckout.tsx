@@ -1,6 +1,5 @@
 "use client";
 
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useState } from "react";
 
 interface PayPalCheckoutProps {
@@ -11,10 +10,34 @@ interface PayPalCheckoutProps {
 }
 
 export function PayPalCheckout({ planId, email, planName, price }: PayPalCheckoutProps) {
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
 
-  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "";
+  async function handlePay() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/paypal/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId, email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Erro ao criar pedido");
+        return;
+      }
+
+      window.location.href = data.approvalUrl;
+    } catch {
+      setError("Erro ao conectar com o servidor");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="space-y-3">
@@ -33,71 +56,23 @@ export function PayPalCheckout({ planId, email, planName, price }: PayPalCheckou
         </p>
       </div>
 
-      {success ? (
-        <div className="p-4 rounded text-sm text-center" style={{ backgroundColor: "#e8f5e9", color: "#2e7d32" }}>
-          <p className="font-semibold">Pagamento confirmado!</p>
-          <p className="text-xs mt-1">Verifique seu email para criar sua conta.</p>
+      {error && (
+        <div
+          className="p-3 rounded text-xs"
+          style={{ backgroundColor: "#fde8e8", color: "#c0392b" }}
+        >
+          {error}
         </div>
-      ) : (
-        <>
-          {error && (
-            <div
-              className="p-3 rounded text-xs"
-              style={{ backgroundColor: "#fde8e8", color: "#c0392b" }}
-            >
-              {error}
-            </div>
-          )}
-
-          <PayPalScriptProvider
-            options={{
-              clientId,
-              currency: "BRL",
-              intent: "capture",
-            }}
-          >
-            <PayPalButtons
-              style={{ layout: "vertical", color: "gold", shape: "rect", label: "pay" }}
-              createOrder={async () => {
-                setError("");
-                const res = await fetch("/api/paypal/create-order", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ planId, email }),
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                  setError(data.error || "Erro ao criar pedido");
-                  throw new Error(data.error);
-                }
-                sessionStorage.setItem("paypal_purchase_id", data.purchaseId);
-                return data.orderId;
-              }}
-              onApprove={async (data) => {
-                const purchaseId = sessionStorage.getItem("paypal_purchase_id");
-                const res = await fetch("/api/paypal/capture-order", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ orderId: data.orderID, purchaseId }),
-                });
-                const result = await res.json();
-                if (!res.ok) {
-                  setError(result.error || "Erro ao confirmar pagamento");
-                  return;
-                }
-                sessionStorage.removeItem("paypal_purchase_id");
-                setSuccess(true);
-              }}
-              onError={() => {
-                setError("Erro no pagamento. Tente novamente.");
-              }}
-              onCancel={() => {
-                setError("Pagamento cancelado.");
-              }}
-            />
-          </PayPalScriptProvider>
-        </>
       )}
+
+      <button
+        onClick={handlePay}
+        disabled={loading}
+        className="w-full py-3 px-4 rounded-lg font-bold text-white disabled:opacity-60"
+        style={{ backgroundColor: "#0070BA", fontSize: "15px" }}
+      >
+        {loading ? "Aguarde..." : "Pagar com PayPal"}
+      </button>
     </div>
   );
 }

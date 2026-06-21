@@ -99,9 +99,19 @@ export async function POST(request: NextRequest) {
       .update({ mp_preference_id: order.id })
       .eq("id", purchase.id);
 
+    const approvalLink = order.links?.find(
+      (l: { rel: string; href: string }) => l.rel === "payer-action"
+    );
+
+    if (!approvalLink) {
+      console.error("No approval link in PayPal response:", order);
+      return NextResponse.json({ error: "Link de pagamento não encontrado" }, { status: 500 });
+    }
+
     return NextResponse.json({
       orderId: order.id,
       purchaseId: purchase.id,
+      approvalUrl: approvalLink.href,
     });
   } catch (error) {
     console.error("Checkout error:", error);
