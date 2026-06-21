@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
           description: `Acesso a ${plan.tools.length} ferramenta(s): ${plan.tools.join(", ")}`,
           quantity: 1,
           unit_price: unitPrice,
+          currency_id: "BRL",
         },
       ],
       payer: {
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
         failure: `${appUrl}/checkout/falha?purchase_id=${purchase.id}`,
         pending: `${appUrl}/checkout/pendente?purchase_id=${purchase.id}`,
       },
-      auto_return: "approved",
+      notification_url: `${appUrl}/api/webhooks/mercadopago`,
     };
 
     const mpResponse = await fetch("https://api.mercadopago.com/checkout/preferences", {
