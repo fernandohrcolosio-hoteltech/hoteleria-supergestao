@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +9,32 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [loadingEmail, setLoadingEmail] = useState(true);
   const router = useRouter();
+
+  useEffect(() => {
+    async function loadEmail() {
+      try {
+        const supabase = createClient();
+        const { data: purchase } = await supabase
+          .from("purchases")
+          .select("email")
+          .eq("onboarding_token", params.token)
+          .eq("token_used", false)
+          .single();
+
+        if (purchase) {
+          setEmail(purchase.email);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar email:", err);
+      } finally {
+        setLoadingEmail(false);
+      }
+    }
+
+    loadEmail();
+  }, [params.token]);
 
   async function handleCadastro(e: React.FormEvent) {
     e.preventDefault();
