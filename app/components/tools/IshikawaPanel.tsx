@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 const CAUSES = [
@@ -73,6 +74,16 @@ export function IshikawaPanel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="ishikawa"
+        getContext={() => {
+          const causasText = CAUSES
+            .filter(c => causas[c.key as keyof typeof causas].trim())
+            .map(c => `${c.label}: ${causas[c.key as keyof typeof causas]}`)
+            .join("\n");
+          return `Problema: ${problema}\n\nCausas identificadas (6M):\n${causasText || "Não informadas"}`;
+        }}
+      />
     </div>
   );
 }

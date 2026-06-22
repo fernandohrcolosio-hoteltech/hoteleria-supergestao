@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 const ETAPAS = [
@@ -101,6 +102,16 @@ export function PdcaPanel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="pdca"
+        getContext={() => {
+          if (!form.tema) return "";
+          const etapasText = ETAPAS.map(e =>
+            `${e.name}: ${form[e.key as keyof typeof form] || "(não preenchido)"}`
+          ).join("\n\n");
+          return `Tema do ciclo: ${form.tema}\n\n${etapasText}`;
+        }}
+      />
     </div>
   );
 }

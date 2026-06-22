@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 type Q = "q1" | "q2" | "q3" | "q4";
@@ -114,6 +115,16 @@ export function EisenhowerPanel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="eisenhower"
+        getContext={() => {
+          const qtd = Object.values(tasks).flat().length;
+          if (qtd === 0) return "";
+          return QUADRANTS.map(q =>
+            `${q.title} (${q.action}):\n${tasks[q.key].length > 0 ? tasks[q.key].map(t => "  - " + t).join("\n") : "  (vazio)"}`
+          ).join("\n\n");
+        }}
+      />
     </div>
   );
 }

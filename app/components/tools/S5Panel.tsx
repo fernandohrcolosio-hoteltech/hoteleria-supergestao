@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 type Status = "red" | "yellow" | "green" | null;
@@ -119,6 +120,17 @@ export function S5Panel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="5s"
+        getContext={() => {
+          if (!area) return "";
+          const STATUS_LABEL: Record<string, string> = { red: "CRÍTICO", yellow: "ATENÇÃO", green: "OK" };
+          const sensosText = SENSOS.map(s =>
+            `${s.jp} - ${s.pt} [${STATUS_LABEL[statuses[s.num] || ""] || "NÃO AVALIADO"}]: ${textos[s.num] || "(sem observação)"}`
+          ).join("\n");
+          return `Área: ${area}\n\nSensos:\n${sensosText}`;
+        }}
+      />
     </div>
   );
 }

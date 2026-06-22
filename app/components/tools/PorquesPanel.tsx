@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 const EMPTY_PQS = { p1: "", p2: "", p3: "", p4: "", p5: "" };
@@ -92,6 +93,16 @@ export function PorquesPanel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="porques"
+        getContext={() => {
+          const chain = [pqs.p1, pqs.p2, pqs.p3, pqs.p4, pqs.p5]
+            .filter(v => v.trim())
+            .map((p, i) => `${i + 1}º Porquê: ${p}`)
+            .join("\n");
+          return `Problema: ${problema}\n\nCadeia de 5 Porquês:\n${chain || "Não preenchida"}`;
+        }}
+      />
     </div>
   );
 }

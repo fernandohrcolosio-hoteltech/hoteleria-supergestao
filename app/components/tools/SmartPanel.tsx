@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAI } from "@/app/hooks/useAI";
 import { AIOutput } from "./AIOutput";
+import { ActionPlan } from "./ActionPlan";
 import { s, card, btnGold, btnOutline, toolHeader } from "./styles";
 
 const EMPTY = { rascunho: "", S: "", M: "", A: "", R: "", T: "" };
@@ -84,6 +85,20 @@ export function SmartPanel() {
       </div>
 
       <AIOutput visible={visible} loading={loading} result={result} />
+      <ActionPlan
+        toolSlug="smart"
+        getContext={() => {
+          const campos = [
+            form.rascunho && `Meta em rascunho: ${form.rascunho}`,
+            form.S && `Específica (S): ${form.S}`,
+            form.M && `Mensurável (M): ${form.M}`,
+            form.A && `Atingível (A): ${form.A}`,
+            form.R && `Relevante (R): ${form.R}`,
+            form.T && `Temporal (T): ${form.T}`,
+          ].filter(Boolean).join("\n");
+          return campos || "";
+        }}
+      />
     </div>
   );
 }
