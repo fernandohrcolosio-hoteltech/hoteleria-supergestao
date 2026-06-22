@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { IshikawaPanel } from "./IshikawaPanel";
 import { PorquesPanel } from "./PorquesPanel";
 import { SmartPanel } from "./SmartPanel";
@@ -17,6 +19,7 @@ const TABS = [
 ] as const;
 
 type TabKey = typeof TABS[number]["key"];
+const TAB_KEYS = TABS.map(t => t.key) as string[];
 
 const PANELS: Record<TabKey, React.FC> = {
   ishikawa: IshikawaPanel,
@@ -27,14 +30,41 @@ const PANELS: Record<TabKey, React.FC> = {
   pdca: PdcaPanel,
 };
 
-export function HubDashboard() {
-  const [active, setActive] = useState<TabKey>("ishikawa");
+function HubInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramKey = searchParams.get("t");
+  const initial: TabKey = TAB_KEYS.includes(paramKey || "") ? (paramKey as TabKey) : "ishikawa";
+  const [active, setActive] = useState<TabKey>(initial);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const p = searchParams.get("t");
+    if (p && TAB_KEYS.includes(p) && p !== active) setActive(p as TabKey);
+  }, [searchParams]);
+
+  const switchTab = useCallback((key: TabKey) => {
+    setActive(key);
+    const url = new URL(window.location.href);
+    url.searchParams.set("t", key);
+    router.replace(url.pathname + url.search, { scroll: false });
+  }, [router]);
+
+  function copyLink() {
+    const url = new URL(window.location.href);
+    url.searchParams.set("t", active);
+    navigator.clipboard.writeText(url.toString()).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   const Panel = PANELS[active];
 
   return (
     <div style={{ backgroundColor: "var(--cream)", minHeight: "100vh" }}>
 
-      {/* ─── Sticky header com nav ─── */}
+      {/* ─── Sticky header ─── */}
       <header style={{
         background: "var(--navy)",
         color: "var(--white)",
@@ -57,8 +87,7 @@ export function HubDashboard() {
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{
               width: 36, height: 36,
-              background: "var(--gold)",
-              borderRadius: 10,
+              background: "var(--gold)", borderRadius: 10,
               display: "flex", alignItems: "center", justifyContent: "center",
               fontFamily: "var(--font-serif, serif)",
               fontSize: 15, color: "var(--navy)", fontWeight: 700,
@@ -74,43 +103,76 @@ export function HubDashboard() {
             </div>
           </div>
 
-          {/* Nav */}
-          <nav style={{ display: "flex", gap: 4 }}>
-            {TABS.map(tab => {
-              const isActive = active === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => setActive(tab.key)}
-                  style={{
-                    background: isActive ? "var(--gold)" : "none",
-                    border: "none",
-                    color: isActive ? "var(--navy)" : "rgba(255,255,255,0.55)",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: isActive ? 600 : 500,
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    borderRadius: 8,
-                    transition: "all 0.2s",
-                    letterSpacing: "0.3px",
-                    whiteSpace: "nowrap",
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "white"; (e.currentTarget as HTMLButtonElement).style.background = isActive ? "var(--gold)" : "rgba(255,255,255,0.07)"; }}
-                  onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.55)"; (e.currentTarget as HTMLButtonElement).style.background = "none"; } }}
-                >
-                  {tab.icon} {tab.label}
-                </button>
-              );
-            })}
-          </nav>
+          {/* Nav + copy link */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <nav style={{ display: "flex", gap: 2 }}>
+              {TABS.map(tab => {
+                const isActive = active === tab.key;
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => switchTab(tab.key)}
+                    style={{
+                      background: isActive ? "var(--gold)" : "none",
+                      border: "none",
+                      color: isActive ? "var(--navy)" : "rgba(255,255,255,0.55)",
+                      fontFamily: "inherit",
+                      fontSize: 13,
+                      fontWeight: isActive ? 600 : 500,
+                      padding: "8px 14px",
+                      cursor: "pointer",
+                      borderRadius: 8,
+                      transition: "all 0.15s",
+                      letterSpacing: "0.3px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {tab.icon} {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Copy link button */}
+            <button
+              onClick={copyLink}
+              title="Copiar link desta ferramenta"
+              style={{
+                marginLeft: 8,
+                background: copied ? "rgba(26,107,74,0.25)" : "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: 8,
+                color: copied ? "#6ee7b7" : "rgba(255,255,255,0.7)",
+                fontSize: 12,
+                fontWeight: 500,
+                padding: "6px 12px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                whiteSpace: "nowrap",
+                transition: "all 0.2s",
+                fontFamily: "inherit",
+              }}
+            >
+              {copied ? "✓ Copiado!" : "🔗 Copiar link"}
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* ─── Panel content ─── */}
+      {/* ─── Panel ─── */}
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
         <Panel />
       </main>
     </div>
+  );
+}
+
+export function HubDashboard() {
+  return (
+    <Suspense>
+      <HubInner />
+    </Suspense>
   );
 }
