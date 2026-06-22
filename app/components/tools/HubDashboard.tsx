@@ -33,78 +33,84 @@ export function HubDashboard() {
 
   return (
     <div style={{ backgroundColor: "var(--cream)", minHeight: "100vh" }}>
-      {/* Header */}
+
+      {/* ─── Sticky header com nav ─── */}
       <header style={{
         background: "var(--navy)",
-        padding: "24px 32px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom: "3px solid var(--gold)",
+        color: "var(--white)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        boxShadow: "0 2px 20px rgba(13,27,42,0.3)",
       }}>
-        <div>
-          <div style={{
-            display: "inline-block",
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            color: "var(--gold)",
-            marginBottom: 4,
-          }}>
-            HoteleriA · SuperGestão
+        <div style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "0 32px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: 62,
+        }}>
+
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{
+              width: 36, height: 36,
+              background: "var(--gold)",
+              borderRadius: 10,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "var(--font-serif, serif)",
+              fontSize: 15, color: "var(--navy)", fontWeight: 700,
+              letterSpacing: "-0.5px", flexShrink: 0,
+            }}>MC</div>
+            <div>
+              <div style={{ fontFamily: "var(--font-serif, serif)", fontSize: 16, color: "var(--white)", lineHeight: 1.1 }}>
+                Melhoria Contínua
+              </div>
+              <div style={{ fontSize: 10, color: "var(--gold-light, #e2c47a)", textTransform: "uppercase", letterSpacing: "1.5px" }}>
+                Ferramentas de Gestão · IA Integrada
+              </div>
+            </div>
           </div>
-          <h1 className="font-serif" style={{ fontSize: 24, color: "var(--white)", margin: 0 }}>
-            Hub de Melhoria Contínua
-          </h1>
-        </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textAlign: "right" }}>
-          6 ferramentas de gestão<br />com análise por IA
+
+          {/* Nav */}
+          <nav style={{ display: "flex", gap: 4 }}>
+            {TABS.map(tab => {
+              const isActive = active === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActive(tab.key)}
+                  style={{
+                    background: isActive ? "var(--gold)" : "none",
+                    border: "none",
+                    color: isActive ? "var(--navy)" : "rgba(255,255,255,0.55)",
+                    fontFamily: "inherit",
+                    fontSize: 13,
+                    fontWeight: isActive ? 600 : 500,
+                    padding: "8px 16px",
+                    cursor: "pointer",
+                    borderRadius: 8,
+                    transition: "all 0.2s",
+                    letterSpacing: "0.3px",
+                    whiteSpace: "nowrap",
+                  }}
+                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLButtonElement).style.color = "white"; (e.currentTarget as HTMLButtonElement).style.background = isActive ? "var(--gold)" : "rgba(255,255,255,0.07)"; }}
+                  onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.55)"; (e.currentTarget as HTMLButtonElement).style.background = "none"; } }}
+                >
+                  {tab.icon} {tab.label}
+                </button>
+              );
+            })}
+          </nav>
         </div>
       </header>
 
-      {/* Tab bar */}
-      <div style={{
-        background: "var(--white)",
-        borderBottom: "1px solid var(--border)",
-        padding: "0 32px",
-        overflowX: "auto",
-        display: "flex",
-        gap: 4,
-      }}>
-        {TABS.map(tab => {
-          const isActive = active === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActive(tab.key)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "14px 18px",
-                border: "none",
-                borderBottom: isActive ? "3px solid var(--gold)" : "3px solid transparent",
-                background: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                fontWeight: isActive ? 700 : 500,
-                color: isActive ? "var(--navy)" : "var(--text-muted)",
-                whiteSpace: "nowrap",
-                transition: "color 0.15s, border-color 0.15s",
-              }}
-            >
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Panel content */}
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 32px 64px" }}>
+      {/* ─── Panel content ─── */}
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
         <Panel />
-      </div>
+      </main>
     </div>
   );
 }

@@ -1,119 +1,168 @@
-import { createClient } from "@/lib/supabase/server";
-import { PlanCard } from "@/app/components/PlanCard";
 import Link from "next/link";
 
-export default async function Home() {
-  const supabase = await createClient();
+const TOOLS = [
+  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)" },
+  { icon: "❓", name: "5 Porquês", desc: "Aprofunde a análise até a causa real" },
+  { icon: "🎯", name: "Metas SMART", desc: "Estruture metas claras e mensuráveis" },
+  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância" },
+  { icon: "🧹", name: "Programa 5S", desc: "Avalie e organize seu ambiente de trabalho" },
+  { icon: "🔄", name: "Ciclo PDCA", desc: "Plan, Do, Check, Act — melhoria contínua" },
+];
 
-  const { data: plans } = await supabase
-    .from("plans")
-    .select("*")
-    .eq("active", true)
-    .order("price_brl", { ascending: true });
-
-  const avulsos = plans?.filter((p) => p.type === "avulso") || [];
-  const pacotes = plans?.filter((p) => p.type === "pacote") || [];
-
+export default function Home() {
   return (
-    <main className="flex-1" style={{ backgroundColor: "var(--cream)" }}>
-      {/* Header */}
-      <header
-        className="text-white py-20 px-6 text-center relative overflow-hidden"
-        style={{ backgroundColor: "var(--navy)" }}
-      >
-        <div
-          className="absolute bottom-0 left-0 right-0 h-20 rounded-t-full"
-          style={{
-            backgroundColor: "var(--cream)",
-            transform: "scale(1.5)",
-          }}
-        ></div>
+    <main style={{ backgroundColor: "var(--cream)", minHeight: "100vh", fontFamily: "var(--font-sans, sans-serif)" }}>
 
-        <div className="relative z-10 max-w-3xl mx-auto">
-          <div
-            className="inline-block px-4 py-2 rounded-full text-xs font-semibold uppercase mb-6"
-            style={{
-              backgroundColor: "rgba(201, 168, 76, 0.15)",
-              color: "var(--gold-light)",
-              letterSpacing: "1.5px",
-            }}
-          >
+      {/* ─── Hero ─── */}
+      <header style={{
+        background: "var(--navy)",
+        color: "var(--white)",
+        padding: "64px 32px 80px",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 60,
+          background: "var(--cream)", borderRadius: "50% 50% 0 0 / 100% 100% 0 0",
+          transform: "scale(1.6)",
+        }} />
+        <div style={{ position: "relative", zIndex: 10, maxWidth: 700, margin: "0 auto" }}>
+          <div style={{
+            display: "inline-block", padding: "6px 18px", borderRadius: 20,
+            background: "rgba(201,168,76,0.15)", color: "var(--gold-light, #e2c47a)",
+            fontSize: 11, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 24,
+          }}>
             Gestão · Qualidade · IA
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-serif mb-4 leading-tight">
-            Ferramentas de Melhoria
-            <br />
-            Contínua com IA
+          <h1 className="font-serif" style={{ fontSize: 46, lineHeight: 1.1, marginBottom: 18 }}>
+            Hub de Melhoria Contínua<br />
+            <span style={{ color: "var(--gold-light, #e2c47a)" }}>com Inteligência Artificial</span>
           </h1>
 
-          <p className="text-white/70 text-lg max-w-lg mx-auto">
-            Cada ferramenta é independente. Contrate apenas o que sua operação precisa.
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 17, maxWidth: 520, margin: "0 auto 36px", lineHeight: 1.6 }}>
+            6 ferramentas de gestão — Ishikawa, 5 Porquês, SMART, Eisenhower, 5S e PDCA — com análise integrada por IA para gestores hoteleiros.
           </p>
+
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+            <a
+              href="https://kiwify.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "var(--gold)", color: "var(--navy)",
+                border: "none", borderRadius: 12, padding: "14px 28px",
+                fontSize: 15, fontWeight: 700, cursor: "pointer",
+                textDecoration: "none", letterSpacing: "0.2px",
+              }}
+            >
+              Comprar Acesso
+            </a>
+            <Link
+              href="/dashboard"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "transparent", color: "var(--white)",
+                border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 12, padding: "14px 28px",
+                fontSize: 15, fontWeight: 500, cursor: "pointer",
+                textDecoration: "none",
+              }}
+            >
+              Já tenho acesso →
+            </Link>
+          </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-12 -mt-8 relative z-20">
-        {/* Avulsos */}
-        <div className="mb-20">
-          <h2 className="text-3xl font-serif mb-2" style={{ color: "var(--navy)" }}>
-            Ferramentas Individuais
+      {/* ─── Ferramentas ─── */}
+      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 32px" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <h2 className="font-serif" style={{ fontSize: 32, color: "var(--navy)", marginBottom: 10 }}>
+            6 Ferramentas em um só lugar
           </h2>
-          <p className="mb-8" style={{ color: "var(--text-muted)" }}>
-            Escolha exatamente o que você precisa — R$ 9,90 por mês
+          <p style={{ color: "var(--text-muted)", fontSize: 16, maxWidth: 500, margin: "0 auto" }}>
+            Cada ferramenta tem formulário guiado e análise por IA ao final — prática, objetiva, voltada para operações hoteleiras.
           </p>
-
-          {avulsos.length === 0 ? (
-            <div className="p-4 rounded" style={{ backgroundColor: "#fee", color: "#c00" }}>
-              Nenhuma ferramenta disponível no momento
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {avulsos.map((plan) => (
-                <PlanCard key={plan.id} plan={plan} />
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Pacotes */}
-        {pacotes.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-3xl font-serif mb-2" style={{ color: "var(--navy)" }}>
-              Pacote Completo
-            </h2>
-            <p className="mb-8" style={{ color: "var(--text-muted)" }}>
-              Todas as 6 ferramentas por R$ 49,90 por mês
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {pacotes.map((plan) => (
-                <PlanCard key={plan.id} plan={plan} />
-              ))}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          {TOOLS.map(tool => (
+            <div key={tool.name} style={{
+              background: "var(--white)", border: "1px solid var(--border)",
+              borderRadius: 16, padding: "28px 24px",
+              boxShadow: "0 4px 24px rgba(13,27,42,0.06)",
+            }}>
+              <div style={{ fontSize: 36, marginBottom: 12 }}>{tool.icon}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "var(--navy)", marginBottom: 6 }}>{tool.name}</div>
+              <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>{tool.desc}</div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Como funciona ─── */}
+      <section style={{ background: "var(--white)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", padding: "64px 32px", textAlign: "center" }}>
+          <h2 className="font-serif" style={{ fontSize: 30, color: "var(--navy)", marginBottom: 12 }}>
+            Como funciona
+          </h2>
+          <p style={{ color: "var(--text-muted)", marginBottom: 48, fontSize: 15 }}>
+            Simples e direto — sem login, sem app para instalar.
+          </p>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+            {[
+              { num: "1", title: "Compre no Kiwify", desc: "Acesso imediato após o pagamento. Cartão, Pix ou boleto." },
+              { num: "2", title: "Acesse o Hub", desc: "Você recebe o link direto. Clique e já está dentro — sem senha." },
+              { num: "3", title: "Use com IA", desc: "Preencha a ferramenta e clique em Analisar. A IA entrega o diagnóstico." },
+            ].map(step => (
+              <div key={step.num}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: "50%",
+                  background: "var(--gold)", color: "var(--navy)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "var(--font-serif, serif)", fontSize: 22, fontWeight: 700,
+                  margin: "0 auto 16px",
+                }}>{step.num}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)", marginBottom: 8 }}>{step.title}</div>
+                <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>{step.desc}</div>
+              </div>
+            ))}
           </div>
-        )}
-
-        {/* Footer CTA */}
-        <div className="mt-20 text-center">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            Já tem conta?{" "}
-            <Link href="/login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-              Faça login
-            </Link>
-          </p>
         </div>
-      </div>
+      </section>
 
-      {/* Footer */}
-      <footer
-        className="border-t text-center py-8 px-6 text-sm"
-        style={{
-          borderColor: "var(--border)",
-          color: "var(--text-muted)",
-        }}
-      >
-        Hub de Melhoria Contínua · Ferramentas com IA integrada
+      {/* ─── CTA final ─── */}
+      <section style={{ textAlign: "center", padding: "64px 32px" }}>
+        <h2 className="font-serif" style={{ fontSize: 30, color: "var(--navy)", marginBottom: 16 }}>
+          Pronto para começar?
+        </h2>
+        <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: 15 }}>
+          Acesso a todas as 6 ferramentas com IA integrada.
+        </p>
+        <a
+          href="https://kiwify.com.br"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            background: "var(--navy)", color: "var(--white)",
+            borderRadius: 12, padding: "14px 32px",
+            fontSize: 15, fontWeight: 700, textDecoration: "none",
+          }}
+        >
+          Comprar no Kiwify →
+        </a>
+        <div style={{ marginTop: 20 }}>
+          <Link href="/dashboard" style={{ color: "var(--text-muted)", fontSize: 14, textDecoration: "underline" }}>
+            Já comprei — acessar as ferramentas
+          </Link>
+        </div>
+      </section>
+
+      <footer style={{ borderTop: "1px solid var(--border)", textAlign: "center", padding: "24px 32px", color: "var(--text-muted)", fontSize: 13 }}>
+        Hub de Melhoria Contínua · IA integrada para gestores hoteleiros
       </footer>
     </main>
   );
