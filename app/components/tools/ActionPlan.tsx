@@ -50,25 +50,42 @@ export function ActionPlan({ toolSlug, getContext }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemPrompt: "Você é um especialista em melhoria contínua e gestão hoteleira. Retorne SOMENTE uma lista numerada de ações práticas e concretas. Cada item deve começar com número, ponto e espaço (ex: '1. '). Sem introdução, sem conclusão, sem títulos. Apenas a lista. Responda em português brasileiro.",
-          userPrompt: `Com base nas informações abaixo, sugira de 5 a 7 ações práticas, específicas e executáveis que a equipe pode fazer para resolver o problema:\n\n${context}`,
+          systemPrompt: "Você é um especialista em melhoria contínua e gestão hoteleira. Sugira ações práticas e concretas. Cada ação em uma linha separada. Você pode usar '1.', '- ', '• ' ou qualquer marcador no início da linha. Sem blocos de texto, sem parágrafos longos. Responda em português brasileiro.",
+          userPrompt: `Com base nas informações abaixo, sugira de 5 a 7 ações práticas, específicas e executáveis que a equipe pode fazer:\n\n${context}`,
         }),
       });
       const data = await resp.json();
+
+      if (!resp.ok || data.error) {
+        alert(`Erro da IA: ${data.error || "Tente novamente."}`);
+        return;
+      }
+
       const text: string = data.text || "";
+      // Aceita linhas que começam com: número+ponto, número+), -, •, *, ou texto normal (≥ 10 chars)
       const lines = text
         .split("\n")
         .map((l: string) => l.trim())
-        .filter((l: string) => /^\d+[.)]\s/.test(l));
+        .filter((l: string) => l.length > 8)
+        .filter((l: string) => /^(\d+[.)]\s|[-•*]\s|[A-ZÁÉÍÓÚ])/.test(l));
       const newActions: Action[] = lines.map((line: string) => ({
         id: crypto.randomUUID(),
-        text: line.replace(/^\d+[.)]\s*/, "").trim(),
+        text: line.replace(/^(\d+[.)]\s*|[-•*]\s*)/, "").trim(),
         source: "ai",
         done: false,
         createdAt: new Date().toISOString(),
       }));
       if (newActions.length === 0) {
-        alert("A IA não retornou uma lista válida. Tente novamente.");
+        // fallback: divide o texto em sentenças
+        const sentences = text.split(/[.\n]/).map((s: string) => s.trim()).filter((s: string) => s.length > 15);
+        if (sentences.length > 0) {
+          setActions(prev => [...prev, ...sentences.slice(0, 7).map((s: string) => ({
+            id: crypto.randomUUID(), text: s, source: "ai" as const, done: false,
+            createdAt: new Date().toISOString(),
+          }))]);
+          return;
+        }
+        alert("A IA retornou um formato inesperado. Adicione ações manualmente.");
         return;
       }
       setActions(prev => [...prev, ...newActions]);

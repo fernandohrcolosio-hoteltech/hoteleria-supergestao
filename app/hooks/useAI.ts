@@ -17,9 +17,13 @@ export function useAI() {
         body: JSON.stringify({ systemPrompt, userPrompt }),
       });
       const data = await resp.json();
-      setResult(data.text || data.error || "Erro na resposta.");
+      if (!resp.ok || data.error) {
+        setResult(`⚠ ${data.error || "Erro desconhecido da IA."}`);
+      } else {
+        setResult(data.text || "Sem resposta.");
+      }
     } catch {
-      setResult("Erro ao conectar com a IA.");
+      setResult("⚠ Não foi possível conectar à IA. Verifique sua conexão.");
     } finally {
       setLoading(false);
     }
