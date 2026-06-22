@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,8 @@ interface Purchase {
   plan_id: string;
 }
 
-export default function CadastroPage({ params }: { params: { token: string } }) {
+export default function CadastroPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = use(params);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
         const { data } = await supabase
           .from("purchases")
           .select("email")
-          .eq("onboarding_token", params.token)
+          .eq("onboarding_token", token)
           .eq("token_used", false)
           .single();
 
@@ -43,8 +44,8 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
       }
     }
 
-    loadEmail();
-  }, [params.token]);
+    if (token) loadEmail();
+  }, [token]);
 
   async function handleCadastro(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +58,7 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
       const { data: purchaseData } = await supabase
         .from("purchases")
         .select("id, email, plan_id")
-        .eq("onboarding_token", params.token)
+        .eq("onboarding_token", token)
         .eq("token_used", false)
         .single();
 
@@ -168,9 +169,10 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
               className="w-full px-3 py-2 border rounded text-sm"
               style={{ borderColor: "var(--border)" }}
-              placeholder="••••••••"
+              placeholder="mínimo 6 caracteres"
             />
           </div>
 
@@ -182,7 +184,7 @@ export default function CadastroPage({ params }: { params: { token: string } }) 
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !email}
             className="w-full py-2 px-4 rounded-lg font-semibold text-white disabled:opacity-50"
             style={{ backgroundColor: "var(--navy)" }}
           >
