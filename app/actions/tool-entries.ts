@@ -1,22 +1,25 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { getUser } from "./auth";
+import { cookies } from "next/headers";
+
+async function getSessionId(): Promise<string> {
+  const cookieStore = await cookies();
+  return cookieStore.get("session_id")?.value || "anonymous";
+}
 
 export async function createToolEntry(
   toolSlug: string,
   name: string,
   data: Record<string, unknown>
 ) {
-  const user = await getUser();
-  if (!user) return { error: "Não autenticado" };
-
+  const sessionId = await getSessionId();
   const supabase = await createClient();
 
   const { data: entry, error } = await supabase
     .from("tool_entries")
     .insert({
-      user_id: user.id,
+      user_id: sessionId,
       tool_slug: toolSlug,
       name,
       data,
@@ -33,9 +36,7 @@ export async function updateToolEntry(
   data: Record<string, unknown>,
   aiAnalysis?: string
 ) {
-  const user = await getUser();
-  if (!user) return { error: "Não autenticado" };
-
+  const sessionId = await getSessionId();
   const supabase = await createClient();
 
   const { data: entry, error } = await supabase
@@ -46,7 +47,7 @@ export async function updateToolEntry(
       updated_at: new Date().toISOString(),
     })
     .eq("id", entryId)
-    .eq("user_id", user.id)
+    .eq("user_id", sessionId)
     .select()
     .single();
 
@@ -55,16 +56,14 @@ export async function updateToolEntry(
 }
 
 export async function getToolEntry(entryId: string) {
-  const user = await getUser();
-  if (!user) return { error: "Não autenticado" };
-
+  const sessionId = await getSessionId();
   const supabase = await createClient();
 
   const { data: entry, error } = await supabase
     .from("tool_entries")
     .select("*")
     .eq("id", entryId)
-    .eq("user_id", user.id)
+    .eq("user_id", sessionId)
     .single();
 
   if (error) return { error: error.message };
@@ -72,15 +71,13 @@ export async function getToolEntry(entryId: string) {
 }
 
 export async function listToolEntries(toolSlug: string) {
-  const user = await getUser();
-  if (!user) return { error: "Não autenticado" };
-
+  const sessionId = await getSessionId();
   const supabase = await createClient();
 
   const { data: entries, error } = await supabase
     .from("tool_entries")
     .select("id, name, created_at, updated_at")
-    .eq("user_id", user.id)
+    .eq("user_id", sessionId)
     .eq("tool_slug", toolSlug)
     .order("updated_at", { ascending: false });
 
@@ -89,16 +86,14 @@ export async function listToolEntries(toolSlug: string) {
 }
 
 export async function deleteToolEntry(entryId: string) {
-  const user = await getUser();
-  if (!user) return { error: "Não autenticado" };
-
+  const sessionId = await getSessionId();
   const supabase = await createClient();
 
   const { error } = await supabase
     .from("tool_entries")
     .delete()
     .eq("id", entryId)
-    .eq("user_id", user.id);
+    .eq("user_id", sessionId);
 
   if (error) return { error: error.message };
   return { success: true };

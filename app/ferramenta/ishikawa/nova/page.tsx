@@ -1,11 +1,9 @@
 "use client";
 
-import { getUser } from "@/app/actions/auth";
 import { createToolEntry } from "@/app/actions/tool-entries";
 import { IshikawaForm } from "@/app/components/IshikawaForm";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
 
 export default function IshikawaNova() {
   const [entryId, setEntryId] = useState<string | null>(null);
@@ -13,13 +11,7 @@ export default function IshikawaNova() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Create blank entry on load
     async function init() {
-      const user = await getUser();
-      if (!user) {
-        redirect("/login");
-      }
-
       const { entry, error: createError } = await createToolEntry(
         "ishikawa",
         "Nova Análise",

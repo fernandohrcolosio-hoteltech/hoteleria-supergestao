@@ -1,16 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  const response = await updateSession(request);
+  const response = NextResponse.next();
 
-  const pathname = request.nextUrl.pathname;
-
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/ferramenta")) {
-    const user = response.headers.get("x-user-id");
-    if (!user) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  if (!request.cookies.get("session_id")) {
+    response.cookies.set("session_id", crypto.randomUUID(), {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365, // 1 ano
+      path: "/",
+    });
   }
 
   return response;

@@ -4,18 +4,12 @@ import { createToolEntry } from "@/app/actions/tool-entries";
 import { PdcaForm } from "@/app/components/PdcaForm";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import { getUser } from "@/app/actions/auth";
-
 export default function ToolPDCANova() {
   const [entryId, setEntryId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function init() {
-      const user = await getUser();
-      if (!user) redirect("/login");
-
       const { entry, error: createError } = await createToolEntry("pdca", "Nova Análise", {});
 
       if (createError) {

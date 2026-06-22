@@ -1,8 +1,6 @@
-import { getUser } from "@/app/actions/auth";
 import { getToolEntry } from "@/app/actions/tool-entries";
 import { PorquesForm } from "@/app/components/PorquesForm";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 interface PorquesPageProps {
   params: Promise<{ id: string }>;
@@ -10,8 +8,6 @@ interface PorquesPageProps {
 
 export default async function PorquesPage({ params }: PorquesPageProps) {
   const { id } = await params;
-  const user = await getUser();
-  if (!user) redirect("/login");
 
   const { entry, error } = await getToolEntry(id);
 

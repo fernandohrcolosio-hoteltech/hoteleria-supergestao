@@ -1,26 +1,8 @@
-import { getUser } from "@/app/actions/auth";
 import { listToolEntries } from "@/app/actions/tool-entries";
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function IshikawaListPage() {
-  const user = await getUser();
-  if (!user) redirect("/login");
-
-  const supabase = await createClient();
-
-  // Check access
-  const { data: access } = await supabase
-    .from("user_tool_access")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("tool_slug", "ishikawa")
-    .single();
-
-  if (!access) redirect("/dashboard");
-
-  const { entries } = await listToolEntries("ishikawa");
+    const { entries } = await listToolEntries("ishikawa");
 
   return (
     <main style={{ backgroundColor: "var(--cream)", minHeight: "100vh" }}>
@@ -100,3 +82,4 @@ export default async function IshikawaListPage() {
     </main>
   );
 }
+

@@ -1,24 +1,7 @@
-import { getUser } from "@/app/actions/auth";
 import { listToolEntries } from "@/app/actions/tool-entries";
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function PorquesListPage() {
-  const user = await getUser();
-  if (!user) redirect("/login");
-
-  const supabase = await createClient();
-
-  const { data: access } = await supabase
-    .from("user_tool_access")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("tool_slug", "porques")
-    .single();
-
-  if (!access) redirect("/dashboard");
-
   const { entries } = await listToolEntries("porques");
 
   return (

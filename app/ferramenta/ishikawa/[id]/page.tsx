@@ -1,8 +1,6 @@
-import { getUser } from "@/app/actions/auth";
 import { getToolEntry } from "@/app/actions/tool-entries";
 import { IshikawaForm } from "@/app/components/IshikawaForm";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 interface IshikawaPageProps {
   params: Promise<{ id: string }>;
@@ -10,9 +8,6 @@ interface IshikawaPageProps {
 
 export default async function IshikawaPage({ params }: IshikawaPageProps) {
   const { id } = await params;
-
-  const user = await getUser();
-  if (!user) redirect("/login");
 
   const { entry, error } = await getToolEntry(id);
 

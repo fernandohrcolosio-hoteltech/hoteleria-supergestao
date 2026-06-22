@@ -4,18 +4,12 @@ import { createToolEntry } from "@/app/actions/tool-entries";
 import { S5Form } from "@/app/components/S5Form";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import { getUser } from "@/app/actions/auth";
-
 export default function Tool5SNova() {
   const [entryId, setEntryId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function init() {
-      const user = await getUser();
-      if (!user) redirect("/login");
-
       const { entry, error: createError } = await createToolEntry("5s", "Nova Análise", {});
 
       if (createError) {
