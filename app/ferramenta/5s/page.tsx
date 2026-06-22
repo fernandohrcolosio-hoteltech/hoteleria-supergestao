@@ -1,12 +1,12 @@
 import { StandaloneHeader } from "@/app/components/tools/StandaloneHeader";
-import { IshikawaPanel } from "@/app/components/tools/IshikawaPanel";
+import { S5Panel } from "@/app/components/tools/S5Panel";
 
-export default function IshikawaPage() {
+export default function S5Page() {
   return (
     <div style={{ backgroundColor: "var(--cream)", minHeight: "100vh" }}>
-      <StandaloneHeader icon="🐟" name="Diagrama de Ishikawa" badge="Causa e Efeito · IA Integrada" />
+      <StandaloneHeader icon="🧹" name="Programa 5S" badge="Organização e Padronização · IA Integrada" />
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
-        <IshikawaPanel />
+        <S5Panel />
       </main>
     </div>
   );

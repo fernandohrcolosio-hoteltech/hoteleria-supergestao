@@ -1,12 +1,12 @@
 import { StandaloneHeader } from "@/app/components/tools/StandaloneHeader";
-import { IshikawaPanel } from "@/app/components/tools/IshikawaPanel";
+import { PdcaPanel } from "@/app/components/tools/PdcaPanel";
 
-export default function IshikawaPage() {
+export default function PdcaPage() {
   return (
     <div style={{ backgroundColor: "var(--cream)", minHeight: "100vh" }}>
-      <StandaloneHeader icon="🐟" name="Diagrama de Ishikawa" badge="Causa e Efeito · IA Integrada" />
+      <StandaloneHeader icon="🔄" name="Ciclo PDCA" badge="Melhoria Contínua · IA Integrada" />
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
-        <IshikawaPanel />
+        <PdcaPanel />
       </main>
     </div>
   );

@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 const TOOLS = [
-  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)" },
-  { icon: "❓", name: "5 Porquês", desc: "Aprofunde a análise até a causa real" },
-  { icon: "🎯", name: "Metas SMART", desc: "Estruture metas claras e mensuráveis" },
-  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância" },
-  { icon: "🧹", name: "Programa 5S", desc: "Avalie e organize seu ambiente de trabalho" },
-  { icon: "🔄", name: "Ciclo PDCA", desc: "Plan, Do, Check, Act — melhoria contínua" },
+  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)", slug: "ishikawa" },
+  { icon: "❓", name: "5 Porquês", desc: "Aprofunde a análise até a causa real", slug: "porques" },
+  { icon: "🎯", name: "Metas SMART", desc: "Estruture metas claras e mensuráveis", slug: "smart" },
+  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower" },
+  { icon: "🧹", name: "Programa 5S", desc: "Avalie e organize seu ambiente de trabalho", slug: "5s" },
+  { icon: "🔄", name: "Ciclo PDCA", desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca" },
 ];
 
 export default function Home() {
@@ -89,15 +89,22 @@ export default function Home() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
           {TOOLS.map(tool => (
-            <div key={tool.name} style={{
-              background: "var(--white)", border: "1px solid var(--border)",
-              borderRadius: 16, padding: "28px 24px",
-              boxShadow: "0 4px 24px rgba(13,27,42,0.06)",
-            }}>
+            <Link
+              key={tool.slug}
+              href={`/ferramenta/${tool.slug}`}
+              style={{
+                background: "var(--white)", border: "1px solid var(--border)",
+                borderRadius: 16, padding: "28px 24px",
+                boxShadow: "0 4px 24px rgba(13,27,42,0.06)",
+                textDecoration: "none", display: "block",
+                transition: "transform 0.15s, box-shadow 0.15s",
+              }}
+            >
               <div style={{ fontSize: 36, marginBottom: 12 }}>{tool.icon}</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: "var(--navy)", marginBottom: 6 }}>{tool.name}</div>
-              <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5 }}>{tool.desc}</div>
-            </div>
+              <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 14 }}>{tool.desc}</div>
+              <div style={{ fontSize: 12, color: "var(--gold)", fontWeight: 600 }}>Acessar →</div>
+            </Link>
           ))}
         </div>
       </section>
