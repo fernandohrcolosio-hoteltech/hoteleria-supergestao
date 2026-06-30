@@ -22,50 +22,146 @@ function hasPlusForTool(slug: string): boolean {
   return match[1].split(",").includes(slug);
 }
 
-function PlusBanner({ toolSlug }: { toolSlug: string }) {
+const KIWIFY: Record<string, string> = {
+  ishikawa:   "https://pay.kiwify.com.br/Nyjb4EB",
+  porques:    "https://pay.kiwify.com.br/bU48YA3",
+  smart:      "https://pay.kiwify.com.br/PY7JZQa",
+  eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
+  "5s":       "https://pay.kiwify.com.br/2ALcA4a",
+  pdca:       "https://pay.kiwify.com.br/6yUDRQp",
+};
+
+function PlusBanner({ toolSlug, onActivated }: { toolSlug: string; onActivated: () => void }) {
+  const [code, setCode] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [msg, setMsg] = useState("");
+  const [showForm, setShowForm] = useState(false);
+
+  async function activate() {
+    if (!code.trim()) return;
+    setStatus("loading");
+    setMsg("");
+    const resp = await fetch("/api/plus/activate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code.trim(), tool_slug: toolSlug }),
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      setStatus("success");
+      setMsg("Acesso Plus ativado!");
+      setTimeout(() => onActivated(), 1200);
+    } else {
+      setStatus("error");
+      setMsg(data.error || "Código inválido. Tente novamente.");
+    }
+  }
+
   return (
     <div style={{
-      background: "var(--navy)", borderRadius: 20, padding: 28, marginTop: 20,
+      background: "var(--navy)", borderRadius: 20, marginTop: 20,
       position: "relative", overflow: "hidden",
     }}>
       <div style={{
         position: "absolute", top: 0, left: 0, right: 0, height: 3,
         background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))",
       }} />
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
-        <div style={{
-          width: 48, height: 48, background: "var(--gold)", borderRadius: 14, flexShrink: 0,
-          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
-        }}>✦</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: "serif", fontSize: 18, color: "var(--white)", marginBottom: 6 }}>
-            Plano de Ação · Plus
-          </div>
-          <p style={{ color: "rgba(250,248,243,0.65)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>
-            Salve ações criadas com IA, adicione as suas próprias e acompanhe o progresso — tudo sincronizado entre dispositivos.
-          </p>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <Link
-              href={`/ativar-plus?tool=${toolSlug}`}
-              style={{
-                background: "var(--gold)", color: "var(--navy)",
-                textDecoration: "none", borderRadius: 10, padding: "11px 22px",
-                fontSize: 14, fontWeight: 700, display: "inline-block",
-              }}
-            >
-              Já tenho Plus → Ativar
-            </Link>
-            <Link
-              href="/"
-              style={{
-                color: "rgba(250,248,243,0.55)", fontSize: 13,
-                textDecoration: "underline",
-              }}
-            >
-              Ver planos e preços
-            </Link>
+
+      <div style={{ padding: "28px 28px 24px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 20 }}>
+          <div style={{
+            width: 44, height: 44, background: "var(--gold)", borderRadius: 12, flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
+          }}>✦</div>
+          <div>
+            <div style={{ fontFamily: "serif", fontSize: 17, color: "var(--white)", marginBottom: 4 }}>
+              Plano de Ação · Plus
+            </div>
+            <p style={{ color: "rgba(250,248,243,0.6)", fontSize: 13, lineHeight: 1.5, margin: 0 }}>
+              Salve ações com IA e acompanhe o progresso em qualquer dispositivo.
+            </p>
           </div>
         </div>
+
+        {!showForm ? (
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <a
+              href={KIWIFY[toolSlug] || "/"}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--gold)", color: "var(--navy)",
+                textDecoration: "none", borderRadius: 10, padding: "11px 20px",
+                fontSize: 14, fontWeight: 700,
+              }}
+            >
+              Comprar Plus — R$ 59,90
+            </a>
+            <button
+              onClick={() => setShowForm(true)}
+              style={{
+                background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)",
+                borderRadius: 10, padding: "11px 20px", color: "rgba(255,255,255,0.75)",
+                fontSize: 14, cursor: "pointer", fontFamily: "inherit",
+              }}
+            >
+              Já comprei → Inserir código
+            </button>
+          </div>
+        ) : (
+          <div>
+            <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+              <input
+                type="text"
+                value={code}
+                onChange={e => setCode(e.target.value.toUpperCase())}
+                onKeyDown={e => e.key === "Enter" && activate()}
+                placeholder="XXXXX-XXXXX"
+                disabled={status === "success"}
+                autoFocus
+                style={{
+                  flex: 1, background: "rgba(255,255,255,0.07)",
+                  border: "1.5px solid rgba(255,255,255,0.2)",
+                  borderRadius: 10, padding: "12px 14px",
+                  fontSize: 16, fontFamily: "monospace", fontWeight: 600,
+                  letterSpacing: "2px", color: "var(--white)", outline: "none",
+                }}
+              />
+              <button
+                onClick={activate}
+                disabled={status === "loading" || status === "success" || !code.trim()}
+                style={{
+                  background: status === "success" ? "#1a6b4a" : "var(--gold)",
+                  color: status === "success" ? "var(--white)" : "var(--navy)",
+                  border: "none", borderRadius: 10, padding: "12px 20px",
+                  fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                  whiteSpace: "nowrap",
+                  opacity: (status === "loading" || !code.trim()) ? 0.7 : 1,
+                }}
+              >
+                {status === "loading" ? "Validando..." : status === "success" ? "✓ Ativado!" : "Ativar"}
+              </button>
+            </div>
+            {msg && (
+              <div style={{
+                fontSize: 13, padding: "8px 12px", borderRadius: 8,
+                background: status === "success" ? "rgba(26,107,74,0.2)" : "rgba(192,57,43,0.15)",
+                color: status === "success" ? "#6ee7b7" : "#fca5a5",
+              }}>
+                {status === "success" ? "✓ " : "⚠ "}{msg}
+              </div>
+            )}
+            <button
+              onClick={() => { setShowForm(false); setCode(""); setMsg(""); setStatus("idle"); }}
+              style={{
+                background: "none", border: "none", color: "rgba(255,255,255,0.35)",
+                fontSize: 12, cursor: "pointer", marginTop: 8, fontFamily: "inherit",
+              }}
+            >
+              ← Voltar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -175,7 +271,7 @@ export function ActionPlan({ toolSlug, getContext }: Props) {
     setActions(prev => prev.filter(a => a.id !== id));
   }
 
-  if (!hasPlus) return <PlusBanner toolSlug={toolSlug} />;
+  if (!hasPlus) return <PlusBanner toolSlug={toolSlug} onActivated={() => setHasPlus(true)} />;
 
   const pending = actions.filter(a => !a.done);
   const done = actions.filter(a => a.done);
