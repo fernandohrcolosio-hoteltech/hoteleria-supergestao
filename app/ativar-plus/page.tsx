@@ -4,13 +4,13 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
 
-const TOOLS: Record<string, { icon: string; name: string }> = {
-  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa" },
-  porques:    { icon: "❓", name: "5 Porquês" },
-  smart:      { icon: "🎯", name: "Metas SMART" },
-  eisenhower: { icon: "⚡", name: "Matriz de Eisenhower" },
-  "5s":       { icon: "🧹", name: "Programa 5S" },
-  pdca:       { icon: "🔄", name: "Ciclo PDCA" },
+const TOOLS: Record<string, { icon: string; name: string; kiwify: string; price: string }> = {
+  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", kiwify: "https://pay.kiwify.com.br/Nyjb4EB", price: "R$ 59,90" },
+  porques:    { icon: "❓", name: "5 Porquês",            kiwify: "https://pay.kiwify.com.br/bU48YA3", price: "R$ 59,90" },
+  smart:      { icon: "🎯", name: "Metas SMART",          kiwify: "https://pay.kiwify.com.br/PY7JZQa", price: "R$ 59,90" },
+  eisenhower: { icon: "⚡", name: "Matriz de Eisenhower", kiwify: "https://pay.kiwify.com.br/PkQCvGR", price: "R$ 59,90" },
+  "5s":       { icon: "🧹", name: "Programa 5S",          kiwify: "https://pay.kiwify.com.br/2ALcA4a", price: "R$ 59,90" },
+  pdca:       { icon: "🔄", name: "Ciclo PDCA",           kiwify: "https://pay.kiwify.com.br/6yUDRQp", price: "R$ 59,90" },
 };
 
 function ActivateInner() {
@@ -70,46 +70,76 @@ function ActivateInner() {
         </div>
       </header>
 
-      <main style={{ maxWidth: 520, margin: "80px auto", padding: "0 24px" }}>
+      <main style={{ maxWidth: 520, margin: "60px auto", padding: "0 24px 80px" }}>
+
+        {/* ── Comprar agora ── */}
+        {tool && (
+          <div style={{
+            background: "var(--navy)", borderRadius: 20, overflow: "hidden",
+            boxShadow: "0 8px 40px rgba(13,27,42,0.2)", marginBottom: 16,
+          }}>
+            <div style={{ height: 4, background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))" }} />
+            <div style={{ padding: "32px 36px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+                <span style={{ fontSize: 28 }}>{tool.icon}</span>
+                <div>
+                  <div style={{ fontFamily: "serif", fontSize: 18, color: "var(--white)" }}>{tool.name}</div>
+                  <div style={{ fontSize: 11, color: "var(--gold-light, #e2c47a)", textTransform: "uppercase", letterSpacing: "1.5px" }}>
+                    Versão Plus
+                  </div>
+                </div>
+                <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                  <div style={{ fontFamily: "serif", fontSize: 26, color: "var(--gold-light, #e2c47a)", fontWeight: 700 }}>
+                    {tool.price}
+                  </div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>pagamento único</div>
+                </div>
+              </div>
+
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 24px" }}>
+                {["Formulário guiado com IA", "Análise inteligente do problema", "Plano de Ação salvo com IA", "Acesso em qualquer dispositivo", "Acesso vitalício"].map(f => (
+                  <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                    <span style={{ color: "var(--gold-light, #e2c47a)", fontSize: 13 }}>✓</span>
+                    <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 14 }}>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href={tool.kiwify}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "block", width: "100%", boxSizing: "border-box",
+                  background: "var(--gold)", color: "var(--navy)",
+                  borderRadius: 12, padding: "16px",
+                  fontSize: 16, fontWeight: 700, textDecoration: "none",
+                  textAlign: "center", letterSpacing: "0.3px",
+                }}
+              >
+                Comprar agora — {tool.price}
+              </a>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textAlign: "center", margin: "12px 0 0" }}>
+                Cartão, Pix ou boleto · Processado pelo Kiwify
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Já comprei — inserir código ── */}
         <div style={{
           background: "var(--white)", border: "1px solid var(--border)",
           borderRadius: 20, overflow: "hidden",
-          boxShadow: "0 8px 40px rgba(13,27,42,0.1)",
+          boxShadow: "0 4px 20px rgba(13,27,42,0.07)",
         }}>
-          {/* Gold bar */}
-          <div style={{ height: 4, background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))" }} />
-
-          <div style={{ padding: "40px 40px 36px" }}>
-            {/* Tool badge */}
-            {tool ? (
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: 10,
-                background: "var(--cream)", border: "1px solid var(--border)",
-                borderRadius: 12, padding: "10px 18px", marginBottom: 28,
-              }}>
-                <span style={{ fontSize: 24 }}>{tool.icon}</span>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--navy)" }}>{tool.name}</div>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Versão Plus</div>
-                </div>
-              </div>
-            ) : (
-              <div style={{ color: "var(--text-muted)", fontSize: 14, marginBottom: 28 }}>
-                Ferramenta não identificada. Volte ao link do produto.
-              </div>
-            )}
-
-            <h1 style={{ fontFamily: "serif", fontSize: 26, color: "var(--navy)", margin: "0 0 10px" }}>
-              Ative seu acesso Plus
-            </h1>
-            <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, margin: "0 0 32px" }}>
-              Insira o código recebido após sua compra para desbloquear o <strong>Plano de Ação com IA</strong> nesta ferramenta.
+          <div style={{ padding: "28px 36px 32px" }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 16 }}>
+              Já comprei — inserir código
+            </div>
+            <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>
+              Após a compra você recebe um código por e-mail. Insira abaixo para ativar o Plus nesta ferramenta.
             </p>
 
-            {/* Code input */}
-            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--navy)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
-              Código de ativação
-            </label>
             <input
               type="text"
               value={code}
@@ -123,14 +153,13 @@ function ActivateInner() {
                 borderRadius: 10, padding: "14px 16px",
                 fontSize: 18, fontFamily: "monospace", fontWeight: 600,
                 letterSpacing: "3px", color: "var(--navy)",
-                outline: "none", marginBottom: 16,
+                outline: "none", marginBottom: 14,
               }}
             />
 
-            {/* Error / success message */}
             {msg && (
               <div style={{
-                padding: "12px 16px", borderRadius: 10, marginBottom: 16, fontSize: 14,
+                padding: "12px 16px", borderRadius: 10, marginBottom: 14, fontSize: 14,
                 background: status === "success" ? "rgba(26,107,74,0.1)" : "rgba(192,57,43,0.08)",
                 color: status === "success" ? "#1a6b4a" : "#c0392b",
                 border: `1px solid ${status === "success" ? "rgba(26,107,74,0.2)" : "rgba(192,57,43,0.2)"}`,
@@ -148,23 +177,16 @@ function ActivateInner() {
               onClick={activate}
               disabled={status === "loading" || status === "success" || !code.trim() || !tool}
               style={{
-                width: "100%", padding: "15px",
-                background: status === "success" ? "#1a6b4a" : "var(--gold)",
-                color: status === "success" ? "var(--white)" : "var(--navy)",
+                width: "100%", padding: "14px",
+                background: status === "success" ? "#1a6b4a" : "var(--navy)",
+                color: "var(--white)",
                 border: "none", borderRadius: 10,
                 fontSize: 15, fontWeight: 700, cursor: "pointer",
-                fontFamily: "inherit", opacity: (status === "loading" || !code.trim() || !tool) ? 0.7 : 1,
+                fontFamily: "inherit", opacity: (status === "loading" || !code.trim() || !tool) ? 0.6 : 1,
               }}
             >
               {status === "loading" ? "Validando..." : status === "success" ? "✓ Ativado!" : "Ativar acesso Plus"}
             </button>
-
-            <p style={{ fontSize: 12, color: "var(--text-muted)", textAlign: "center", marginTop: 20 }}>
-              Ainda não tem o Plus?{" "}
-              <Link href="/" style={{ color: "var(--navy)", fontWeight: 600 }}>
-                Conheça os planos →
-              </Link>
-            </p>
           </div>
         </div>
       </main>
