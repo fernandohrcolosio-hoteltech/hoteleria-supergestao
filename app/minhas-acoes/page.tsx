@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 interface Action {
@@ -10,7 +10,7 @@ interface Action {
   createdAt: string;
 }
 
-const TOOLS: Record<string, { icon: string; name: string; slug: string }> = {
+const ALL_TOOLS: Record<string, { icon: string; name: string; slug: string }> = {
   ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", slug: "ishikawa" },
   porques:    { icon: "❓", name: "5 Porquês",            slug: "porques" },
   smart:      { icon: "🎯", name: "Metas SMART",          slug: "smart" },
@@ -19,7 +19,15 @@ const TOOLS: Record<string, { icon: string; name: string; slug: string }> = {
   pdca:       { icon: "🔄", name: "Ciclo PDCA",           slug: "pdca" },
 };
 
+function getPlusSlugs(): string[] {
+  if (typeof document === "undefined") return [];
+  const match = document.cookie.match(/(?:^|;\s*)plus_tools=([^;]*)/);
+  if (!match || !match[1]) return [];
+  return match[1].split(",").filter(Boolean);
+}
+
 export default function MinhasAcoesPage() {
+  const [plusSlugs, setPlusSlugs] = useState<string[]>([]);
   const [allActions, setAllActions] = useState<Record<string, Action[]>>({});
   const [sessionId, setSessionId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,10 +38,19 @@ export default function MinhasAcoesPage() {
   const [showCode, setShowCode] = useState(false);
 
   useEffect(() => {
+    const slugs = getPlusSlugs();
+    setPlusSlugs(slugs);
+    if (slugs.length === 0) { setLoading(false); return; }
+
     fetch("/api/tool-actions/all")
       .then(r => r.json())
       .then(d => {
-        setAllActions(d.actions || {});
+        // Only expose actions for tools the user has Plus for
+        const filtered: Record<string, Action[]> = {};
+        for (const slug of slugs) {
+          filtered[slug] = (d.actions?.[slug] as Action[]) || [];
+        }
+        setAllActions(filtered);
         setSessionId(d.sessionId || "");
         setLoading(false);
       });
@@ -41,8 +58,7 @@ export default function MinhasAcoesPage() {
 
   function toggleDone(slug: string, id: string) {
     const updated = allActions[slug].map(a => a.id === id ? { ...a, done: !a.done } : a);
-    const next = { ...allActions, [slug]: updated };
-    setAllActions(next);
+    setAllActions(prev => ({ ...prev, [slug]: updated }));
     fetch("/api/tool-actions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -52,8 +68,7 @@ export default function MinhasAcoesPage() {
 
   function removeAction(slug: string, id: string) {
     const updated = allActions[slug].filter(a => a.id !== id);
-    const next = { ...allActions, [slug]: updated };
-    setAllActions(next);
+    setAllActions(prev => ({ ...prev, [slug]: updated }));
     fetch("/api/tool-actions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -86,10 +101,9 @@ export default function MinhasAcoesPage() {
     });
   }
 
-  const totalActions = Object.values(allActions).flat().length;
-  const doneActions = Object.values(allActions).flat().filter(a => a.done).length;
-  const toolsWithActions = Object.entries(allActions).filter(([, actions]) => actions.length > 0);
-
+  const allActionsFlat = Object.values(allActions).flat();
+  const totalActions = allActionsFlat.length;
+  const doneActions = allActionsFlat.filter(a => a.done).length;
   const shortCode = sessionId ? sessionId.slice(0, 8).toUpperCase() : "";
 
   return (
@@ -118,11 +132,11 @@ export default function MinhasAcoesPage() {
                 Minhas Ações
               </div>
               <div style={{ fontSize: 10, color: "var(--gold-light, #e2c47a)", textTransform: "uppercase", letterSpacing: "1.5px" }}>
-                Progresso em todas as ferramentas
+                Plano de Ação · Plus
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
+          {plusSlugs.length > 0 && (
             <button
               onClick={() => setShowCode(v => !v)}
               style={{
@@ -133,14 +147,50 @@ export default function MinhasAcoesPage() {
             >
               🔑 Meu código de acesso
             </button>
-          </div>
+          )}
         </div>
       </header>
 
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 32px 80px" }}>
 
+        {/* Sem Plus — CTA de upgrade */}
+        {!loading && plusSlugs.length === 0 && (
+          <div style={{
+            background: "var(--navy)", borderRadius: 20, padding: 48, textAlign: "center",
+            position: "relative", overflow: "hidden",
+          }}>
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: 4,
+              background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))",
+            }} />
+            <div style={{ fontSize: 48, marginBottom: 20 }}>✦</div>
+            <h2 style={{ fontFamily: "serif", fontSize: 26, color: "var(--white)", margin: "0 0 12px" }}>
+              Esta área é exclusiva do plano Plus
+            </h2>
+            <p style={{ color: "rgba(250,248,243,0.6)", fontSize: 15, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 32px" }}>
+              Com o Plus você salva e acompanha todas as ações criadas com IA — e acessa seu progresso em qualquer dispositivo.
+            </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              {Object.values(ALL_TOOLS).map(t => (
+                <a key={t.slug} href={`/ativar-plus?tool=${t.slug}`} style={{
+                  background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)",
+                  borderRadius: 10, padding: "10px 18px", textDecoration: "none",
+                  color: "var(--gold-light, #e2c47a)", fontSize: 13, fontWeight: 600,
+                }}>
+                  {t.icon} {t.name} Plus
+                </a>
+              ))}
+            </div>
+            <div style={{ marginTop: 28 }}>
+              <Link href="/#precos" style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, textDecoration: "underline" }}>
+                Ver todos os planos e preços
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Código de acesso panel */}
-        {showCode && (
+        {showCode && plusSlugs.length > 0 && (
           <div style={{
             background: "var(--navy)", borderRadius: 16, padding: 28, marginBottom: 28,
             position: "relative", overflow: "hidden",
@@ -172,10 +222,9 @@ export default function MinhasAcoesPage() {
                 {codeCopied ? "✓ Copiado!" : "Copiar código"}
               </button>
             </div>
-
             <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 20 }}>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>
-                Restaurar acesso com código salvo anteriormente:
+                Restaurar acesso em outro dispositivo:
               </div>
               <div style={{ display: "flex", gap: 10 }}>
                 <input
@@ -189,16 +238,12 @@ export default function MinhasAcoesPage() {
                     fontFamily: "inherit", fontSize: 14, outline: "none",
                   }}
                 />
-                <button
-                  onClick={handleRestore}
-                  disabled={restoring || !restoreCode.trim()}
-                  style={{
-                    background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
-                    borderRadius: 8, color: "var(--white)", padding: "10px 18px",
-                    fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-                    opacity: restoring ? 0.6 : 1,
-                  }}
-                >
+                <button onClick={handleRestore} disabled={restoring || !restoreCode.trim()} style={{
+                  background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: 8, color: "var(--white)", padding: "10px 18px",
+                  fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                  opacity: restoring ? 0.6 : 1,
+                }}>
                   {restoring ? "Restaurando..." : "Restaurar"}
                 </button>
               </div>
@@ -211,115 +256,103 @@ export default function MinhasAcoesPage() {
           </div>
         )}
 
-        {/* Resumo */}
-        {!loading && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 32 }}>
-            {[
-              { label: "Total de ações", value: totalActions, color: "var(--navy)" },
-              { label: "Concluídas", value: doneActions, color: "#1a6b4a" },
-              { label: "Pendentes", value: totalActions - doneActions, color: "#c0392b" },
-            ].map(stat => (
-              <div key={stat.label} style={{
-                background: "var(--white)", border: "1px solid var(--border)",
-                borderRadius: 14, padding: "20px 24px",
-                boxShadow: "0 2px 12px rgba(13,27,42,0.05)",
-              }}>
-                <div style={{ fontSize: 32, fontWeight: 700, color: stat.color, fontFamily: "serif", lineHeight: 1 }}>
-                  {stat.value}
-                </div>
-                <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Por ferramenta */}
-        {loading ? (
-          <div style={{ textAlign: "center", padding: 60, color: "var(--text-muted)" }}>Carregando...</div>
-        ) : toolsWithActions.length === 0 ? (
-          <div style={{
-            background: "var(--white)", border: "1px solid var(--border)", borderRadius: 16,
-            padding: "48px 32px", textAlign: "center",
-          }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>📋</div>
-            <div style={{ fontSize: 18, fontFamily: "serif", color: "var(--navy)", marginBottom: 8 }}>
-              Nenhuma ação salva ainda
-            </div>
-            <p style={{ color: "var(--text-muted)", fontSize: 14, marginBottom: 24 }}>
-              Acesse uma ferramenta, preencha o problema e use o <strong>Plano de Ação</strong> para gerar ou adicionar ações.
-            </p>
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-              {Object.values(TOOLS).map(t => (
-                <Link key={t.slug} href={`/ferramenta/${t.slug}`} style={{
-                  background: "var(--cream)", border: "1px solid var(--border)", borderRadius: 8,
-                  padding: "8px 16px", textDecoration: "none", color: "var(--navy)", fontSize: 13,
-                }}>
-                  {t.icon} {t.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {toolsWithActions.map(([slug, actions]) => {
-              const tool = TOOLS[slug];
-              const pending = actions.filter(a => !a.done);
-              const done = actions.filter(a => a.done);
-              return (
-                <div key={slug} style={{
+        {/* Resumo (só com Plus) */}
+        {!loading && plusSlugs.length > 0 && (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 32 }}>
+              {[
+                { label: "Total de ações", value: totalActions, color: "var(--navy)" },
+                { label: "Concluídas", value: doneActions, color: "#1a6b4a" },
+                { label: "Pendentes", value: totalActions - doneActions, color: "#c0392b" },
+              ].map(stat => (
+                <div key={stat.label} style={{
                   background: "var(--white)", border: "1px solid var(--border)",
-                  borderRadius: 16, overflow: "hidden",
+                  borderRadius: 14, padding: "20px 24px",
                   boxShadow: "0 2px 12px rgba(13,27,42,0.05)",
                 }}>
-                  {/* Tool header */}
-                  <div style={{
-                    background: "var(--navy)", padding: "16px 24px",
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <span style={{ fontSize: 22 }}>{tool.icon}</span>
-                      <div>
-                        <div style={{ fontFamily: "serif", fontSize: 16, color: "var(--white)" }}>
-                          {tool.name}
+                  <div style={{ fontSize: 32, fontWeight: 700, color: stat.color, fontFamily: "serif", lineHeight: 1 }}>
+                    {stat.value}
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 4 }}>{stat.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Ferramentas com Plus */}
+            {loading ? (
+              <div style={{ textAlign: "center", padding: 60, color: "var(--text-muted)" }}>Carregando...</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                {plusSlugs.map(slug => {
+                  const tool = ALL_TOOLS[slug];
+                  if (!tool) return null;
+                  const actions = allActions[slug] || [];
+                  const pending = actions.filter(a => !a.done);
+                  const done = actions.filter(a => a.done);
+                  return (
+                    <div key={slug} style={{
+                      background: "var(--white)", border: "1px solid var(--border)",
+                      borderRadius: 16, overflow: "hidden",
+                      boxShadow: "0 2px 12px rgba(13,27,42,0.05)",
+                    }}>
+                      <div style={{
+                        background: "var(--navy)", padding: "16px 24px",
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                      }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <span style={{ fontSize: 22 }}>{tool.icon}</span>
+                          <div>
+                            <div style={{ fontFamily: "serif", fontSize: 16, color: "var(--white)" }}>{tool.name}</div>
+                            <div style={{ fontSize: 11, color: "var(--gold-light, #e2c47a)" }}>
+                              {pending.length} pendente{pending.length !== 1 ? "s" : ""} · {done.length} concluída{done.length !== 1 ? "s" : ""}
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ fontSize: 11, color: "var(--gold-light, #e2c47a)" }}>
-                          {pending.length} pendente{pending.length !== 1 ? "s" : ""} · {done.length} concluída{done.length !== 1 ? "s" : ""}
-                        </div>
+                        <Link href={`/ferramenta/${tool.slug}`} style={{
+                          fontSize: 12, color: "var(--gold-light, #e2c47a)", textDecoration: "none",
+                          background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)",
+                          borderRadius: 6, padding: "5px 12px",
+                        }}>
+                          Abrir ferramenta →
+                        </Link>
+                      </div>
+
+                      <div style={{ padding: "16px 24px" }}>
+                        {actions.length === 0 ? (
+                          <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text-muted)", fontSize: 14 }}>
+                            Nenhuma ação salva ainda.{" "}
+                            <Link href={`/ferramenta/${tool.slug}`} style={{ color: "var(--navy)", fontWeight: 600 }}>
+                              Ir para a ferramenta →
+                            </Link>
+                          </div>
+                        ) : (
+                          <>
+                            {pending.map(action => (
+                              <ActionRow key={action.id} action={action}
+                                onToggle={() => toggleDone(slug, action.id)}
+                                onRemove={() => removeAction(slug, action.id)} />
+                            ))}
+                            {done.length > 0 && pending.length > 0 && (
+                              <div style={{ borderTop: "1px solid var(--border)", margin: "12px 0 10px", paddingTop: 10 }}>
+                                <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                                  Concluídas
+                                </div>
+                              </div>
+                            )}
+                            {done.map(action => (
+                              <ActionRow key={action.id} action={action}
+                                onToggle={() => toggleDone(slug, action.id)}
+                                onRemove={() => removeAction(slug, action.id)} />
+                            ))}
+                          </>
+                        )}
                       </div>
                     </div>
-                    <Link href={`/ferramenta/${tool.slug}`} style={{
-                      fontSize: 12, color: "var(--gold-light, #e2c47a)", textDecoration: "none",
-                      background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)",
-                      borderRadius: 6, padding: "5px 12px",
-                    }}>
-                      Abrir ferramenta →
-                    </Link>
-                  </div>
-
-                  {/* Actions */}
-                  <div style={{ padding: "16px 24px" }}>
-                    {pending.map(action => (
-                      <ActionRow key={action.id} action={action}
-                        onToggle={() => toggleDone(slug, action.id)}
-                        onRemove={() => removeAction(slug, action.id)} />
-                    ))}
-                    {done.length > 0 && pending.length > 0 && (
-                      <div style={{ borderTop: "1px solid var(--border)", margin: "12px 0 10px", paddingTop: 10 }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
-                          Concluídas
-                        </div>
-                      </div>
-                    )}
-                    {done.map(action => (
-                      <ActionRow key={action.id} action={action}
-                        onToggle={() => toggleDone(slug, action.id)}
-                        onRemove={() => removeAction(slug, action.id)} />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>
