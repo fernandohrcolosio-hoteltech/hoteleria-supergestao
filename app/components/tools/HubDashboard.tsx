@@ -157,6 +157,27 @@ function HubInner() {
             >
               {copied ? "✓ Copiado!" : "🔗 Copiar link"}
             </button>
+
+            {/* Minhas Ações link */}
+            <a
+              href="/minhas-acoes"
+              style={{
+                background: "rgba(201,168,76,0.15)",
+                border: "1px solid rgba(201,168,76,0.3)",
+                borderRadius: 8,
+                color: "var(--gold-light, #e2c47a)",
+                fontSize: 12,
+                fontWeight: 500,
+                padding: "6px 12px",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                whiteSpace: "nowrap",
+              }}
+            >
+              💾 Minhas Ações
+            </a>
           </div>
         </div>
       </header>

@@ -70,25 +70,40 @@ export function StandaloneHeader({ icon, name, badge }: Props) {
           </div>
         </div>
 
-        {/* Copiar link */}
-        <button
-          onClick={copyLink}
-          style={{
-            background: copied ? "rgba(26,107,74,0.25)" : "rgba(255,255,255,0.1)",
-            border: "1px solid rgba(255,255,255,0.2)",
+        {/* Actions area */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link href="/minhas-acoes" style={{
+            background: "rgba(201,168,76,0.15)",
+            border: "1px solid rgba(201,168,76,0.3)",
             borderRadius: 8,
-            color: copied ? "#6ee7b7" : "rgba(255,255,255,0.7)",
+            color: "var(--gold-light, #e2c47a)",
             fontSize: 12, fontWeight: 500,
             padding: "7px 14px",
-            cursor: "pointer",
+            textDecoration: "none",
             display: "flex", alignItems: "center", gap: 6,
             whiteSpace: "nowrap",
-            transition: "all 0.2s",
-            fontFamily: "inherit",
-          }}
-        >
-          {copied ? "✓ Copiado!" : "🔗 Copiar link"}
-        </button>
+          }}>
+            💾 Minhas Ações
+          </Link>
+          <button
+            onClick={copyLink}
+            style={{
+              background: copied ? "rgba(26,107,74,0.25)" : "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              borderRadius: 8,
+              color: copied ? "#6ee7b7" : "rgba(255,255,255,0.7)",
+              fontSize: 12, fontWeight: 500,
+              padding: "7px 14px",
+              cursor: "pointer",
+              display: "flex", alignItems: "center", gap: 6,
+              whiteSpace: "nowrap",
+              transition: "all 0.2s",
+              fontFamily: "inherit",
+            }}
+          >
+            {copied ? "✓ Copiado!" : "🔗 Copiar link"}
+          </button>
+        </div>
       </div>
     </header>
   );
