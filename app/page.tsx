@@ -1,21 +1,13 @@
 import Link from "next/link";
 
 const TOOLS = [
-  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)", slug: "ishikawa" },
-  { icon: "❓", name: "5 Porquês",            desc: "Aprofunde a análise até a causa real",    slug: "porques" },
-  { icon: "🎯", name: "Metas SMART",          desc: "Estruture metas claras e mensuráveis",   slug: "smart" },
-  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower" },
-  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",         slug: "5s" },
-  { icon: "🔄", name: "Ciclo PDCA",           desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca" },
+  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)", slug: "ishikawa",   basicUrl: "https://pay.kiwify.com.br/MqZDQPx", plusUrl: "https://pay.kiwify.com.br/1wwn399p70a" },
+  { icon: "❓", name: "5 Porquês",            desc: "Aprofunde a análise até a causa real",  slug: "porques",    basicUrl: "https://pay.kiwify.com.br/r7fcL2N", plusUrl: "https://pay.kiwify.com.br/k7qrl5zv0k4" },
+  { icon: "🎯", name: "Metas SMART",          desc: "Estruture metas claras e mensuráveis",  slug: "smart",      basicUrl: "https://pay.kiwify.com.br/mm2pb8R", plusUrl: "https://pay.kiwify.com.br/218hp1ysh8l" },
+  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower", basicUrl: "https://pay.kiwify.com.br/U9oIJ6A", plusUrl: "https://pay.kiwify.com.br/ysm9bouiqon" },
+  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",        slug: "5s",         basicUrl: "https://pay.kiwify.com.br/qo90r2u", plusUrl: "https://pay.kiwify.com.br/ezfslywfq3g" },
+  { icon: "🔄", name: "Ciclo PDCA",           desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca",   basicUrl: "https://pay.kiwify.com.br/uGFRKDV", plusUrl: "https://pay.kiwify.com.br/3v6ag2t603t" },
 ];
-
-// TODO: substituir pelos links reais do Kiwify após criar os produtos
-const KIWIFY = {
-  basicTool:  "https://kiwify.com.br",
-  basicPack:  "https://kiwify.com.br",
-  plusTool:   "https://kiwify.com.br",
-  plusPack:   "https://kiwify.com.br",
-};
 
 export default function Home() {
   return (
@@ -47,29 +39,11 @@ export default function Home() {
           <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 17, maxWidth: 520, margin: "0 auto 36px", lineHeight: 1.6 }}>
             6 ferramentas de gestão com análise integrada por IA — para gestores hoteleiros que querem resultados reais.
           </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="#precos" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "var(--gold)", color: "var(--navy)",
-              borderRadius: 12, padding: "14px 28px",
-              fontSize: 15, fontWeight: 700, textDecoration: "none",
-            }}>
-              Ver planos e preços
-            </a>
-            <Link href="/dashboard" style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "transparent", color: "var(--white)",
-              border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 12, padding: "14px 28px",
-              fontSize: 15, fontWeight: 500, textDecoration: "none",
-            }}>
-              Já tenho acesso →
-            </Link>
-          </div>
         </div>
       </header>
 
       {/* ─── Ferramentas ─── */}
-      <section style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 32px 48px" }}>
+      <section id="ferramentas" style={{ maxWidth: 1100, margin: "0 auto", padding: "64px 32px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <h2 className="font-serif" style={{ fontSize: 32, color: "var(--navy)", marginBottom: 10 }}>
             6 Ferramentas em um só lugar
@@ -80,7 +54,7 @@ export default function Home() {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
           {TOOLS.map(tool => (
-            <Link key={tool.slug} href={`/ferramenta/${tool.slug}`} style={{
+            <a key={tool.slug} href={tool.basicUrl} target="_blank" rel="noopener noreferrer" style={{
               background: "var(--white)", border: "1px solid var(--border)",
               borderRadius: 16, padding: "28px 24px",
               boxShadow: "0 4px 24px rgba(13,27,42,0.06)",
@@ -90,16 +64,31 @@ export default function Home() {
               <div style={{ fontSize: 15, fontWeight: 700, color: "var(--navy)", marginBottom: 6 }}>{tool.name}</div>
               <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.5, marginBottom: 14 }}>{tool.desc}</div>
               <div style={{ fontSize: 12, color: "var(--gold)", fontWeight: 600 }}>Ver ferramenta →</div>
-            </Link>
+            </a>
           ))}
+        </div>
+
+        {/* Já comprei */}
+        <div style={{ textAlign: "center", marginTop: 48 }}>
+          <p style={{ color: "var(--text-muted)", fontSize: 14, marginBottom: 12 }}>
+            Já comprou? Acesse diretamente com seu código.
+          </p>
+          <Link href="/minhas-acoes" style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            background: "transparent", color: "var(--text-muted)",
+            border: "1px solid var(--border)", borderRadius: 10, padding: "10px 22px",
+            fontSize: 14, textDecoration: "none",
+          }}>
+            Já comprei — acessar →
+          </Link>
         </div>
       </section>
 
-      {/* ─── Preços ─── */}
-      <section id="precos" style={{ background: "var(--navy)", padding: "72px 32px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      {/* ─── Preços (oculto — preços mostrados no Kiwify) ─── */}
+      <section id="precos" style={{ display: "none" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-          <div style={{ textAlign: "center", marginBottom: 52 }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
             <div style={{
               display: "inline-block", padding: "5px 16px", borderRadius: 20,
               background: "rgba(201,168,76,0.15)", color: "var(--gold-light, #e2c47a)",
@@ -108,258 +97,73 @@ export default function Home() {
               Planos e Preços
             </div>
             <h2 className="font-serif" style={{ fontSize: 34, color: "var(--white)", margin: "0 0 12px" }}>
-              Escolha o plano ideal para você
+              Escolha a ferramenta e o plano
             </h2>
-            <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 15, maxWidth: 480, margin: "0 auto" }}>
-              Acesso individual por ferramenta ou pacote completo. Basic para usar, Plus para salvar e acompanhar.
+            <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 15, maxWidth: 520, margin: "0 auto 16px" }}>
+              Cada ferramenta é vendida separadamente. Basic para usar com IA, Plus para salvar e acompanhar as ações.
             </p>
           </div>
 
-          {/* Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-
-            {/* ── Basic ── */}
-            <div style={{
-              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: 20, overflow: "hidden",
-            }}>
-              <div style={{ padding: "28px 28px 24px" }}>
-                <div style={{
-                  display: "inline-block", background: "rgba(255,255,255,0.1)",
-                  color: "rgba(255,255,255,0.7)", fontSize: 11, fontWeight: 700,
-                  letterSpacing: "1.5px", textTransform: "uppercase",
-                  padding: "4px 12px", borderRadius: 20, marginBottom: 16,
-                }}>
-                  Basic
-                </div>
-                <h3 className="font-serif" style={{ fontSize: 24, color: "var(--white)", margin: "0 0 12px" }}>
-                  Ferramenta + IA
-                </h3>
-                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
-                  Acesso completo à ferramenta com análise por IA. Ideal para uso pontual e diagnósticos rápidos.
-                </p>
-                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px" }}>
-                  {[
-                    "Formulário guiado com IA",
-                    "Análise inteligente do problema",
-                    "Sem necessidade de login",
-                    "Acesso vitalício",
-                  ].map(f => (
-                    <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <span style={{ color: "var(--gold-light, #e2c47a)", fontSize: 14 }}>✓</span>
-                      <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 14 }}>{f}</span>
-                    </li>
-                  ))}
-                  {[
-                    "Plano de ação salvo",
-                    "Histórico entre dispositivos",
-                  ].map(f => (
-                    <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 14 }}>✕</span>
-                      <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14, textDecoration: "line-through" }}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", padding: "20px 28px" }}>
-                <div style={{ display: "flex", gap: 12 }}>
-                  {/* 1 ferramenta */}
-                  <a href={KIWIFY.basicTool} target="_blank" rel="noopener noreferrer" style={{
-                    flex: 1, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: 12, padding: "14px 12px", textDecoration: "none", textAlign: "center",
-                    display: "block",
-                  }}>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
-                      1 ferramenta
-                    </div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: "var(--white)", fontFamily: "serif" }}>
-                      R$ 19<span style={{ fontSize: 14, fontWeight: 400 }}>,90</span>
-                    </div>
-                    <div style={{ fontSize: 12, color: "var(--gold-light, #e2c47a)", marginTop: 8, fontWeight: 600 }}>
-                      Comprar →
-                    </div>
-                  </a>
-                  {/* Pacote */}
-                  <a href={KIWIFY.basicPack} target="_blank" rel="noopener noreferrer" style={{
-                    flex: 1, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: 12, padding: "14px 12px", textDecoration: "none", textAlign: "center",
-                    display: "block", position: "relative",
-                  }}>
-                    <div style={{
-                      position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
-                      background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)",
-                      fontSize: 10, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase",
-                      padding: "2px 10px", borderRadius: 20, whiteSpace: "nowrap",
-                    }}>
-                      Todas as 6
-                    </div>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
-                      Pacote completo
-                    </div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: "var(--white)", fontFamily: "serif" }}>
-                      R$ 109<span style={{ fontSize: 14, fontWeight: 400 }}>,90</span>
-                    </div>
-                    <div style={{ fontSize: 12, color: "var(--gold-light, #e2c47a)", marginTop: 8, fontWeight: 600 }}>
-                      Comprar →
-                    </div>
-                  </a>
-                </div>
-              </div>
+          {/* Legenda */}
+          <div style={{ display: "flex", gap: 20, justifyContent: "center", marginBottom: 40 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 12, height: 12, borderRadius: 3, background: "rgba(255,255,255,0.2)" }} />
+              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 13 }}>Basic — R$ 19,90 · Ferramenta + IA</span>
             </div>
-
-            {/* ── Plus ── */}
-            <div style={{
-              background: "var(--white)", border: "2px solid var(--gold)",
-              borderRadius: 20, overflow: "hidden", position: "relative",
-            }}>
-              {/* Top bar */}
-              <div style={{ height: 4, background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))" }} />
-
-              <div style={{ padding: "24px 28px 24px" }}>
-                <div style={{
-                  display: "inline-block", background: "var(--gold)",
-                  color: "var(--navy)", fontSize: 11, fontWeight: 700,
-                  letterSpacing: "1.5px", textTransform: "uppercase",
-                  padding: "4px 12px", borderRadius: 20, marginBottom: 16,
-                }}>
-                  ✦ Plus — Recomendado
-                </div>
-                <h3 className="font-serif" style={{ fontSize: 24, color: "var(--navy)", margin: "0 0 12px" }}>
-                  Ferramenta + IA + Plano de Ação
-                </h3>
-                <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, margin: "0 0 24px" }}>
-                  Tudo do Basic, mais o Plano de Ação com IA: salve metas, acompanhe progresso e acesse de qualquer dispositivo.
-                </p>
-                <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px" }}>
-                  {[
-                    "Formulário guiado com IA",
-                    "Análise inteligente do problema",
-                    "Sem necessidade de login",
-                    "Acesso vitalício",
-                    "Plano de ação salvo com IA",
-                    "Histórico entre dispositivos",
-                  ].map(f => (
-                    <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                      <span style={{ color: "#1a6b4a", fontSize: 14, fontWeight: 700 }}>✓</span>
-                      <span style={{ color: "var(--text-main, #1a1a2e)", fontSize: 14 }}>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div style={{ borderTop: "1px solid var(--border)", padding: "20px 28px" }}>
-                <div style={{ display: "flex", gap: 12 }}>
-                  {/* 1 ferramenta */}
-                  <a href={KIWIFY.plusTool} target="_blank" rel="noopener noreferrer" style={{
-                    flex: 1, background: "var(--cream)", border: "1px solid var(--border)",
-                    borderRadius: 12, padding: "14px 12px", textDecoration: "none", textAlign: "center",
-                    display: "block",
-                  }}>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
-                      1 ferramenta
-                    </div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: "var(--navy)", fontFamily: "serif" }}>
-                      R$ 59<span style={{ fontSize: 14, fontWeight: 400 }}>,90</span>
-                    </div>
-                    <div style={{ fontSize: 12, color: "var(--navy)", marginTop: 8, fontWeight: 600 }}>
-                      Comprar →
-                    </div>
-                  </a>
-                  {/* Pacote */}
-                  <a href={KIWIFY.plusPack} target="_blank" rel="noopener noreferrer" style={{
-                    flex: 1, background: "var(--gold)", border: "2px solid var(--gold)",
-                    borderRadius: 12, padding: "14px 12px", textDecoration: "none", textAlign: "center",
-                    display: "block", position: "relative",
-                  }}>
-                    <div style={{
-                      position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
-                      background: "var(--navy)", color: "var(--gold-light, #e2c47a)",
-                      fontSize: 10, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase",
-                      padding: "2px 10px", borderRadius: 20, whiteSpace: "nowrap",
-                    }}>
-                      Melhor valor
-                    </div>
-                    <div style={{ fontSize: 11, color: "rgba(13,27,42,0.6)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
-                      Pacote completo
-                    </div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: "var(--navy)", fontFamily: "serif" }}>
-                      R$ 309<span style={{ fontSize: 14, fontWeight: 400 }}>,90</span>
-                    </div>
-                    <div style={{ fontSize: 12, color: "var(--navy)", marginTop: 8, fontWeight: 700 }}>
-                      Comprar →
-                    </div>
-                  </a>
-                </div>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 12, height: 12, borderRadius: 3, background: "var(--gold)" }} />
+              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 13 }}>✦ Plus — R$ 59,90 · + Plano de Ação salvo</span>
             </div>
           </div>
 
-          {/* Nota */}
-          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13, marginTop: 24 }}>
-            Acesso vitalício · Sem mensalidade · Pagamento único via Kiwify (cartão, Pix ou boleto)
-          </p>
-        </div>
-      </section>
+          {/* Grade de ferramentas */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+            {TOOLS.map(tool => (
+              <div key={tool.slug} style={{
+                background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)",
+                borderRadius: 16, overflow: "hidden",
+              }}>
+                {/* Cabeçalho da ferramenta */}
+                <div style={{ padding: "20px 20px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <span style={{ fontSize: 28 }}>{tool.icon}</span>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: "var(--white)", lineHeight: 1.2 }}>{tool.name}</div>
+                  </div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.5 }}>{tool.desc}</div>
+                </div>
 
-      {/* ─── Como funciona ─── */}
-      <section style={{ background: "var(--white)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "64px 32px", textAlign: "center" }}>
-          <h2 className="font-serif" style={{ fontSize: 30, color: "var(--navy)", marginBottom: 12 }}>
-            Como funciona
-          </h2>
-          <p style={{ color: "var(--text-muted)", marginBottom: 48, fontSize: 15 }}>
-            Simples e direto — sem login, sem app para instalar.
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
-            {[
-              { num: "1", title: "Compre no Kiwify", desc: "Acesso imediato após o pagamento. Cartão, Pix ou boleto." },
-              { num: "2", title: "Acesse a ferramenta", desc: "Você recebe o link direto. Clique e já está dentro — sem senha." },
-              { num: "3", title: "Use com IA", desc: "Preencha o formulário e clique em Analisar. A IA entrega o diagnóstico instantaneamente." },
-            ].map(step => (
-              <div key={step.num}>
-                <div style={{
-                  width: 48, height: 48, borderRadius: "50%",
-                  background: "var(--gold)", color: "var(--navy)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "var(--font-serif, serif)", fontSize: 22, fontWeight: 700,
-                  margin: "0 auto 16px",
-                }}>{step.num}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "var(--navy)", marginBottom: 8 }}>{step.title}</div>
-                <div style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>{step.desc}</div>
+                {/* Botões de compra */}
+                <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <a href={tool.basicUrl} target="_blank" rel="noopener noreferrer" style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+                    borderRadius: 10, padding: "10px 14px", textDecoration: "none",
+                  }}>
+                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>Basic</span>
+                    <span style={{ fontSize: 14, color: "var(--white)", fontWeight: 700, fontFamily: "serif" }}>R$ 19,90</span>
+                    <span style={{ fontSize: 12, color: "var(--gold-light, #e2c47a)", fontWeight: 600 }}>Comprar →</span>
+                  </a>
+                  <a href={tool.plusUrl} target="_blank" rel="noopener noreferrer" style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.35)",
+                    borderRadius: 10, padding: "10px 14px", textDecoration: "none",
+                  }}>
+                    <span style={{ fontSize: 12, color: "var(--gold-light, #e2c47a)", fontWeight: 700 }}>✦ Plus</span>
+                    <span style={{ fontSize: 14, color: "var(--white)", fontWeight: 700, fontFamily: "serif" }}>R$ 59,90</span>
+                    <span style={{ fontSize: 12, color: "var(--gold-light, #e2c47a)", fontWeight: 600 }}>Comprar →</span>
+                  </a>
+                </div>
               </div>
             ))}
           </div>
+
+          {/* Nota */}
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13, marginTop: 28 }}>
+            Acesso vitalício · Sem mensalidade · Pagamento via Kiwify (cartão, Pix ou boleto)
+          </p>
         </div>
       </section>
 
-      {/* ─── CTA final ─── */}
-      <section style={{ textAlign: "center", padding: "64px 32px" }}>
-        <h2 className="font-serif" style={{ fontSize: 30, color: "var(--navy)", marginBottom: 12 }}>
-          Comece agora mesmo
-        </h2>
-        <p style={{ color: "var(--text-muted)", marginBottom: 32, fontSize: 15, maxWidth: 420, margin: "0 auto 32px" }}>
-          Escolha uma ferramenta ou o pacote completo. Acesso imediato após o pagamento.
-        </p>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="#precos" style={{
-            display: "inline-flex", alignItems: "center",
-            background: "var(--navy)", color: "var(--white)",
-            borderRadius: 12, padding: "14px 32px",
-            fontSize: 15, fontWeight: 700, textDecoration: "none",
-          }}>
-            Ver planos →
-          </a>
-          <Link href="/dashboard" style={{
-            display: "inline-flex", alignItems: "center",
-            background: "transparent", color: "var(--text-muted)",
-            border: "1px solid var(--border)", borderRadius: 12, padding: "14px 24px",
-            fontSize: 14, textDecoration: "none",
-          }}>
-            Já comprei — acessar
-          </Link>
-        </div>
-      </section>
 
       <footer style={{ borderTop: "1px solid var(--border)", textAlign: "center", padding: "24px 32px", color: "var(--text-muted)", fontSize: 13 }}>
         Hub de Melhoria Contínua · IA integrada para gestores hoteleiros
