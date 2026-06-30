@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 export interface Action {
   id: string;
@@ -14,7 +15,64 @@ interface Props {
   getContext: () => string;
 }
 
+function hasPlusForTool(slug: string): boolean {
+  if (typeof document === "undefined") return false;
+  const match = document.cookie.match(/(?:^|;\s*)plus_tools=([^;]*)/);
+  if (!match) return false;
+  return match[1].split(",").includes(slug);
+}
+
+function PlusBanner({ toolSlug }: { toolSlug: string }) {
+  return (
+    <div style={{
+      background: "var(--navy)", borderRadius: 20, padding: 28, marginTop: 20,
+      position: "relative", overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0, height: 3,
+        background: "linear-gradient(90deg, var(--gold), #e2c47a, var(--gold))",
+      }} />
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 20 }}>
+        <div style={{
+          width: 48, height: 48, background: "var(--gold)", borderRadius: 14, flexShrink: 0,
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
+        }}>✦</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontFamily: "serif", fontSize: 18, color: "var(--white)", marginBottom: 6 }}>
+            Plano de Ação · Plus
+          </div>
+          <p style={{ color: "rgba(250,248,243,0.65)", fontSize: 14, lineHeight: 1.6, margin: "0 0 20px" }}>
+            Salve ações criadas com IA, adicione as suas próprias e acompanhe o progresso — tudo sincronizado entre dispositivos.
+          </p>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+            <Link
+              href={`/ativar-plus?tool=${toolSlug}`}
+              style={{
+                background: "var(--gold)", color: "var(--navy)",
+                textDecoration: "none", borderRadius: 10, padding: "11px 22px",
+                fontSize: 14, fontWeight: 700, display: "inline-block",
+              }}
+            >
+              Já tenho Plus → Ativar
+            </Link>
+            <Link
+              href="/"
+              style={{
+                color: "rgba(250,248,243,0.55)", fontSize: 13,
+                textDecoration: "underline",
+              }}
+            >
+              Ver planos e preços
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ActionPlan({ toolSlug, getContext }: Props) {
+  const [hasPlus, setHasPlus] = useState(false);
   const [actions, setActions] = useState<Action[]>([]);
   const [newText, setNewText] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
@@ -23,13 +81,18 @@ export function ActionPlan({ toolSlug, getContext }: Props) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    fetch(`/api/tool-actions?slug=${toolSlug}`)
-      .then(r => r.json())
-      .then(d => { setActions(d.actions || []); setLoaded(true); });
+    setHasPlus(hasPlusForTool(toolSlug));
   }, [toolSlug]);
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!hasPlus) return;
+    fetch(`/api/tool-actions?slug=${toolSlug}`)
+      .then(r => r.json())
+      .then(d => { setActions(d.actions || []); setLoaded(true); });
+  }, [toolSlug, hasPlus]);
+
+  useEffect(() => {
+    if (!loaded || !hasPlus) return;
     setSaveStatus("saving");
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
@@ -39,7 +102,7 @@ export function ActionPlan({ toolSlug, getContext }: Props) {
         body: JSON.stringify({ slug: toolSlug, actions }),
       }).then(() => setSaveStatus("saved"));
     }, 900);
-  }, [actions, toolSlug, loaded]);
+  }, [actions, toolSlug, loaded, hasPlus]);
 
   async function suggestWithAI() {
     const context = getContext();
@@ -111,6 +174,8 @@ export function ActionPlan({ toolSlug, getContext }: Props) {
   function remove(id: string) {
     setActions(prev => prev.filter(a => a.id !== id));
   }
+
+  if (!hasPlus) return <PlusBanner toolSlug={toolSlug} />;
 
   const pending = actions.filter(a => !a.done);
   const done = actions.filter(a => a.done);
