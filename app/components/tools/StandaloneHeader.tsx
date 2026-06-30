@@ -2,6 +2,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+const KIWIFY: Record<string, string> = {
+  ishikawa:   "https://pay.kiwify.com.br/Nyjb4EB",
+  porques:    "https://pay.kiwify.com.br/bU48YA3",
+  smart:      "https://pay.kiwify.com.br/PY7JZQa",
+  eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
+  "5s":       "https://pay.kiwify.com.br/2ALcA4a",
+  pdca:       "https://pay.kiwify.com.br/6yUDRQp",
+};
+
 interface Props {
   icon: string;
   name: string;
@@ -72,14 +81,14 @@ export function StandaloneHeader({ icon, name, badge, toolSlug }: Props) {
               💾 Minhas Ações
             </Link>
           ) : (
-            <Link href={`/ativar-plus?tool=${toolSlug}`} style={{
+            <a href={KIWIFY[toolSlug] || "/#precos"} target="_blank" rel="noopener noreferrer" style={{
               background: "var(--gold)", border: "none",
               borderRadius: 8, color: "var(--navy)",
               fontSize: 12, fontWeight: 700, padding: "7px 14px",
               textDecoration: "none", display: "flex", alignItems: "center", gap: 6, whiteSpace: "nowrap",
             }}>
               ✦ Upgrade Plus
-            </Link>
+            </a>
           )}
           <button onClick={copyLink} style={{
             background: copied ? "rgba(26,107,74,0.25)" : "rgba(255,255,255,0.1)",
