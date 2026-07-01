@@ -12,7 +12,7 @@ const KIWIFY_BASIC: Record<string, string> = {
 
 const KIWIFY_PLUS: Record<string, string> = {
   ishikawa:   "https://pay.kiwify.com.br/m9u84cduwt0",
-  porques:    "https://pay.kiwify.com.br/ds537bwe5o6",
+  porques:    "https://pay.kiwify.com.br/bU48YA3",
   smart:      "https://pay.kiwify.com.br/PY7JZQa",
   eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
   "5s":       "https://pay.kiwify.com.br/2ALcA4a",
