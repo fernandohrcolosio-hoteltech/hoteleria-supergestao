@@ -15,7 +15,7 @@ const KIWIFY_PLUS: Record<string, string> = {
   porques:    "https://pay.kiwify.com.br/ds537bwe5o6",
   smart:      "https://pay.kiwify.com.br/olpea9bbp1a",
   eisenhower: "https://pay.kiwify.com.br/bttw0g9fn0b",
-  "5s":       "https://pay.kiwify.com.br/1yy3v2acoib",
+  "5s":       "https://pay.kiwify.com.br/2ALcA4a",
   pdca:       "https://pay.kiwify.com.br/6yUDRQp",
 };
 

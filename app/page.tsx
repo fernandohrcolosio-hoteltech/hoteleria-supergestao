@@ -5,7 +5,7 @@ const TOOLS = [
   { icon: "❓", name: "5 Porquês",            desc: "Aprofunde a análise até a causa real",  slug: "porques",    basicUrl: "https://pay.kiwify.com.br/r7fcL2N", plusUrl: "https://pay.kiwify.com.br/ds537bwe5o6" },
   { icon: "🎯", name: "Metas SMART",          desc: "Estruture metas claras e mensuráveis",  slug: "smart",      basicUrl: "https://pay.kiwify.com.br/mm2pb8R", plusUrl: "https://pay.kiwify.com.br/olpea9bbp1a" },
   { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower", basicUrl: "https://pay.kiwify.com.br/U9oIJ6A", plusUrl: "https://pay.kiwify.com.br/bttw0g9fn0b" },
-  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",        slug: "5s",         basicUrl: "https://pay.kiwify.com.br/qo90r2u", plusUrl: "https://pay.kiwify.com.br/1yy3v2acoib" },
+  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",        slug: "5s",         basicUrl: "https://pay.kiwify.com.br/qo90r2u", plusUrl: "https://pay.kiwify.com.br/2ALcA4a" },
   { icon: "🔄", name: "Ciclo PDCA",           desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca",   basicUrl: "https://pay.kiwify.com.br/uGFRKDV", plusUrl: "https://pay.kiwify.com.br/6yUDRQp" },
 ];
 
