@@ -2,21 +2,21 @@
 import { useState, useEffect, ReactNode } from "react";
 
 const KIWIFY_BASIC: Record<string, string> = {
-  ishikawa:   "https://pay.kiwify.com.br/MqZDQPx",
-  porques:    "https://pay.kiwify.com.br/r7fcL2N",
-  smart:      "https://pay.kiwify.com.br/mm2pb8R",
-  eisenhower: "https://pay.kiwify.com.br/U9oIJ6A",
-  "5s":       "https://pay.kiwify.com.br/qo90r2u",
-  pdca:       "https://pay.kiwify.com.br/uGFRKDV",
+  ishikawa:   "https://pay.kiwify.com.br/ty7c68ocull",
+  porques:    "https://pay.kiwify.com.br/elxkcr1mevq",
+  smart:      "https://pay.kiwify.com.br/8kd1fae43t0",
+  eisenhower: "https://pay.kiwify.com.br/3o3akpyvg55",
+  "5s":       "https://pay.kiwify.com.br/jx3ypd7rekl",
+  pdca:       "https://pay.kiwify.com.br/tvdj75m0web",
 };
 
 const KIWIFY_PLUS: Record<string, string> = {
-  ishikawa:   "https://pay.kiwify.com.br/1wwn399p70a",
-  porques:    "https://pay.kiwify.com.br/k7qrl5zv0k4",
-  smart:      "https://pay.kiwify.com.br/218hp1ysh8l",
-  eisenhower: "https://pay.kiwify.com.br/ysm9bouiqon",
-  "5s":       "https://pay.kiwify.com.br/ezfslywfq3g",
-  pdca:       "https://pay.kiwify.com.br/3v6ag2t603t",
+  ishikawa:   "https://pay.kiwify.com.br/m9u84cduwt0",
+  porques:    "https://pay.kiwify.com.br/ds537bwe5o6",
+  smart:      "https://pay.kiwify.com.br/olpea9bbp1a",
+  eisenhower: "https://pay.kiwify.com.br/bttw0g9fn0b",
+  "5s":       "https://pay.kiwify.com.br/1yy3v2acoib",
+  pdca:       "https://pay.kiwify.com.br/ihgj7osb8is",
 };
 
 function hasAccessForSlug(slug: string): boolean {

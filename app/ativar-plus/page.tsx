@@ -5,12 +5,12 @@ import { Suspense } from "react";
 import Link from "next/link";
 
 const TOOLS: Record<string, { icon: string; name: string; kiwify: string; price: string }> = {
-  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", kiwify: "https://pay.kiwify.com.br/Nyjb4EB", price: "R$ 59,90" },
-  porques:    { icon: "❓", name: "5 Porquês",            kiwify: "https://pay.kiwify.com.br/bU48YA3", price: "R$ 59,90" },
-  smart:      { icon: "🎯", name: "Metas SMART",          kiwify: "https://pay.kiwify.com.br/PY7JZQa", price: "R$ 59,90" },
-  eisenhower: { icon: "⚡", name: "Matriz de Eisenhower", kiwify: "https://pay.kiwify.com.br/PkQCvGR", price: "R$ 59,90" },
-  "5s":       { icon: "🧹", name: "Programa 5S",          kiwify: "https://pay.kiwify.com.br/2ALcA4a", price: "R$ 59,90" },
-  pdca:       { icon: "🔄", name: "Ciclo PDCA",           kiwify: "https://pay.kiwify.com.br/6yUDRQp", price: "R$ 59,90" },
+  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", kiwify: "https://pay.kiwify.com.br/m9u84cduwt0", price: "R$ 59,90" },
+  porques:    { icon: "❓", name: "5 Porquês",            kiwify: "https://pay.kiwify.com.br/ds537bwe5o6", price: "R$ 59,90" },
+  smart:      { icon: "🎯", name: "Metas SMART",          kiwify: "https://pay.kiwify.com.br/olpea9bbp1a", price: "R$ 59,90" },
+  eisenhower: { icon: "⚡", name: "Matriz de Eisenhower", kiwify: "https://pay.kiwify.com.br/bttw0g9fn0b", price: "R$ 59,90" },
+  "5s":       { icon: "🧹", name: "Programa 5S",          kiwify: "https://pay.kiwify.com.br/1yy3v2acoib", price: "R$ 59,90" },
+  pdca:       { icon: "🔄", name: "Ciclo PDCA",           kiwify: "https://pay.kiwify.com.br/ihgj7osb8is", price: "R$ 59,90" },
 };
 
 function ActivateInner() {

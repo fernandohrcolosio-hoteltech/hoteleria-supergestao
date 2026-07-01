@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 const TOOLS = [
-  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)", slug: "ishikawa",   basicUrl: "https://pay.kiwify.com.br/MqZDQPx", plusUrl: "https://pay.kiwify.com.br/1wwn399p70a" },
-  { icon: "❓", name: "5 Porquês",            desc: "Aprofunde a análise até a causa real",  slug: "porques",    basicUrl: "https://pay.kiwify.com.br/r7fcL2N", plusUrl: "https://pay.kiwify.com.br/k7qrl5zv0k4" },
-  { icon: "🎯", name: "Metas SMART",          desc: "Estruture metas claras e mensuráveis",  slug: "smart",      basicUrl: "https://pay.kiwify.com.br/mm2pb8R", plusUrl: "https://pay.kiwify.com.br/218hp1ysh8l" },
-  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower", basicUrl: "https://pay.kiwify.com.br/U9oIJ6A", plusUrl: "https://pay.kiwify.com.br/ysm9bouiqon" },
-  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",        slug: "5s",         basicUrl: "https://pay.kiwify.com.br/qo90r2u", plusUrl: "https://pay.kiwify.com.br/ezfslywfq3g" },
-  { icon: "🔄", name: "Ciclo PDCA",           desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca",   basicUrl: "https://pay.kiwify.com.br/uGFRKDV", plusUrl: "https://pay.kiwify.com.br/3v6ag2t603t" },
+  { icon: "🐟", name: "Diagrama de Ishikawa", desc: "Mapeie causas raiz por categoria (6M)", slug: "ishikawa",   basicUrl: "https://pay.kiwify.com.br/ty7c68ocull", plusUrl: "https://pay.kiwify.com.br/m9u84cduwt0" },
+  { icon: "❓", name: "5 Porquês",            desc: "Aprofunde a análise até a causa real",  slug: "porques",    basicUrl: "https://pay.kiwify.com.br/elxkcr1mevq", plusUrl: "https://pay.kiwify.com.br/ds537bwe5o6" },
+  { icon: "🎯", name: "Metas SMART",          desc: "Estruture metas claras e mensuráveis",  slug: "smart",      basicUrl: "https://pay.kiwify.com.br/8kd1fae43t0", plusUrl: "https://pay.kiwify.com.br/olpea9bbp1a" },
+  { icon: "⚡", name: "Matriz de Eisenhower", desc: "Priorize tarefas por urgência e importância", slug: "eisenhower", basicUrl: "https://pay.kiwify.com.br/3o3akpyvg55", plusUrl: "https://pay.kiwify.com.br/bttw0g9fn0b" },
+  { icon: "🧹", name: "Programa 5S",          desc: "Avalie e organize seu ambiente",        slug: "5s",         basicUrl: "https://pay.kiwify.com.br/jx3ypd7rekl", plusUrl: "https://pay.kiwify.com.br/1yy3v2acoib" },
+  { icon: "🔄", name: "Ciclo PDCA",           desc: "Plan, Do, Check, Act — melhoria contínua", slug: "pdca",   basicUrl: "https://pay.kiwify.com.br/tvdj75m0web", plusUrl: "https://pay.kiwify.com.br/ihgj7osb8is" },
 ];
 
 export default function Home() {

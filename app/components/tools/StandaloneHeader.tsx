@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const KIWIFY: Record<string, string> = {
-  ishikawa:   "https://pay.kiwify.com.br/Nyjb4EB",
-  porques:    "https://pay.kiwify.com.br/bU48YA3",
-  smart:      "https://pay.kiwify.com.br/PY7JZQa",
-  eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
-  "5s":       "https://pay.kiwify.com.br/2ALcA4a",
-  pdca:       "https://pay.kiwify.com.br/6yUDRQp",
+  ishikawa:   "https://pay.kiwify.com.br/m9u84cduwt0",
+  porques:    "https://pay.kiwify.com.br/ds537bwe5o6",
+  smart:      "https://pay.kiwify.com.br/olpea9bbp1a",
+  eisenhower: "https://pay.kiwify.com.br/bttw0g9fn0b",
+  "5s":       "https://pay.kiwify.com.br/1yy3v2acoib",
+  pdca:       "https://pay.kiwify.com.br/ihgj7osb8is",
 };
 
 interface Props {
