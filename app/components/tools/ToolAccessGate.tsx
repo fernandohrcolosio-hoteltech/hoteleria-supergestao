@@ -14,7 +14,7 @@ const KIWIFY_PLUS: Record<string, string> = {
   ishikawa:   "https://pay.kiwify.com.br/m9u84cduwt0",
   porques:    "https://pay.kiwify.com.br/ds537bwe5o6",
   smart:      "https://pay.kiwify.com.br/olpea9bbp1a",
-  eisenhower: "https://pay.kiwify.com.br/bttw0g9fn0b",
+  eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
   "5s":       "https://pay.kiwify.com.br/2ALcA4a",
   pdca:       "https://pay.kiwify.com.br/6yUDRQp",
 };
