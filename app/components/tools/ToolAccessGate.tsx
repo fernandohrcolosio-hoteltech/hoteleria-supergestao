@@ -16,7 +16,7 @@ const KIWIFY_PLUS: Record<string, string> = {
   smart:      "https://pay.kiwify.com.br/olpea9bbp1a",
   eisenhower: "https://pay.kiwify.com.br/bttw0g9fn0b",
   "5s":       "https://pay.kiwify.com.br/1yy3v2acoib",
-  pdca:       "https://pay.kiwify.com.br/ihgj7osb8is",
+  pdca:       "https://pay.kiwify.com.br/6yUDRQp",
 };
 
 function hasAccessForSlug(slug: string): boolean {
