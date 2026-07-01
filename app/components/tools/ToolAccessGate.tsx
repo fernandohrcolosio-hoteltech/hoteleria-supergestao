@@ -6,8 +6,8 @@ const KIWIFY_BASIC: Record<string, string> = {
   porques:    "https://pay.kiwify.com.br/r7fcL2N",
   smart:      "https://pay.kiwify.com.br/mm2pb8R",
   eisenhower: "https://pay.kiwify.com.br/U9oIJ6A",
-  "5s":       "https://kiwify.app/nUQQTOB",
-  pdca:       "https://kiwify.app/3Lgmtig",
+  "5s":       "https://pay.kiwify.com.br/qo90r2u",
+  pdca:       "https://pay.kiwify.com.br/uGFRKDV",
 };
 
 const KIWIFY_PLUS: Record<string, string> = {
