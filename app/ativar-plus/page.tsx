@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 
 const TOOLS: Record<string, { icon: string; name: string; kiwify: string; price: string }> = {
-  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", kiwify: "https://pay.kiwify.com.br/m9u84cduwt0", price: "R$ 59,90" },
+  ishikawa:   { icon: "🐟", name: "Diagrama de Ishikawa", kiwify: "https://pay.kiwify.com.br/Nyjb4EB", price: "R$ 59,90" },
   porques:    { icon: "❓", name: "5 Porquês",            kiwify: "https://pay.kiwify.com.br/bU48YA3", price: "R$ 59,90" },
   smart:      { icon: "🎯", name: "Metas SMART",          kiwify: "https://pay.kiwify.com.br/PY7JZQa", price: "R$ 59,90" },
   eisenhower: { icon: "⚡", name: "Matriz de Eisenhower", kiwify: "https://pay.kiwify.com.br/PkQCvGR", price: "R$ 59,90" },

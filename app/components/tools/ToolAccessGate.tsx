@@ -11,7 +11,7 @@ const KIWIFY_BASIC: Record<string, string> = {
 };
 
 const KIWIFY_PLUS: Record<string, string> = {
-  ishikawa:   "https://pay.kiwify.com.br/m9u84cduwt0",
+  ishikawa:   "https://pay.kiwify.com.br/Nyjb4EB",
   porques:    "https://pay.kiwify.com.br/bU48YA3",
   smart:      "https://pay.kiwify.com.br/PY7JZQa",
   eisenhower: "https://pay.kiwify.com.br/PkQCvGR",
