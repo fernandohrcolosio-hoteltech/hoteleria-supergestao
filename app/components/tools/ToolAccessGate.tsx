@@ -2,12 +2,12 @@
 import { useState, useEffect, ReactNode } from "react";
 
 const KIWIFY_BASIC: Record<string, string> = {
-  ishikawa:   "https://pay.kiwify.com.br/ty7c68ocull",
-  porques:    "https://pay.kiwify.com.br/elxkcr1mevq",
-  smart:      "https://pay.kiwify.com.br/8kd1fae43t0",
-  eisenhower: "https://pay.kiwify.com.br/3o3akpyvg55",
-  "5s":       "https://pay.kiwify.com.br/jx3ypd7rekl",
-  pdca:       "https://pay.kiwify.com.br/tvdj75m0web",
+  ishikawa:   "https://pay.kiwify.com.br/MqZDQPx",
+  porques:    "https://pay.kiwify.com.br/r7fcL2N",
+  smart:      "https://pay.kiwify.com.br/mm2pb8R",
+  eisenhower: "https://pay.kiwify.com.br/U9oIJ6A",
+  "5s":       "https://kiwify.app/nUQQTOB",
+  pdca:       "https://kiwify.app/3Lgmtig",
 };
 
 const KIWIFY_PLUS: Record<string, string> = {
